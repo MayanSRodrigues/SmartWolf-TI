@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartWolf TI — Login</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0D1117;
+      color: #E6EDF3;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .login-wrap {
+      width: 100%;
+      max-width: 420px;
+    }
+
+    .login-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .logo-badges {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+
+    .badge-fecaf {
+      background: #003F8A;
+      color: #fff;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      padding: 4px 12px;
+      border-radius: 4px;
+    }
+
+    .badge-ser {
+      background: #007A3D;
+      color: #fff;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      padding: 4px 12px;
+      border-radius: 4px;
+    }
+
+    .login-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 26px;
+      font-weight: 800;
+      margin-bottom: 6px;
+      color: #E6EDF3;
+    }
+
+    .login-sub {
+      font-size: 13px;
+      color: #8B949E;
+    }
+
+    .login-card {
+      background: #0D1520;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-top: 3px solid #0066B3;
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #8B949E;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .form-group input {
+      background: #1C2330;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 8px;
+      color: #E6EDF3;
+      padding: 12px 14px;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      outline: none;
+      width: 100%;
+    }
+
+    .form-group input:focus {
+      border-color: #003F8A;
+      box-shadow: 0 0 0 3px rgba(0,63,138,0.2);
+    }
+
+    .error-msg {
+      background: rgba(248,81,73,0.1);
+      border: 1px solid rgba(248,81,73,0.3);
+      color: #F85149;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    .error-msg.show { display: block; }
+
+    .btn-login {
+      width: 100%;
+      padding: 13px;
+      background: linear-gradient(135deg, #0066B3, #00A651);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+
+    .btn-login:hover { background: linear-gradient(135deg, #004C8C, #008C44); }
+
+    .btn-login:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .login-footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 12px;
+      color: #6E7681;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div class="login-wrap">
+    <div class="login-header">
+      <div class="logo-badges">
+        <span class="badge-fecaf">UniFECAF</span>
+        <span class="badge-ser">ColégioSER</span>
+      </div>
+      <div class="login-title">SmartWolf TI</div>
+      <div class="login-sub">Departamento de TI — Acesso restrito</div>
+    </div>
+
+    <div class="login-card">
+      <div class="error-msg" id="error-msg"></div>
+
+      <div class="form-group">
+        <label>E-mail</label>
+        <input type="email" id="login-email" placeholder="seu@email.com.br" autofocus>
+      </div>
+
+      <div class="form-group">
+        <label>Senha</label>
+        <input type="password" id="login-senha" placeholder="••••••••"
+          onkeydown="if(event.key==='Enter') fazerLogin()">
+      </div>
+
+      <button class="btn-login" id="btn-login" onclick="fazerLogin()">
+        Entrar
+      </button>
+    </div>
+
+    <div class="login-footer">
+      Acesso exclusivo para a equipe de TI
+    </div>
+  </div>
+
+  <script>
+    async function fazerLogin() {
+      const email = document.getElementById('login-email').value.trim();
+      const senha = document.getElementById('login-senha').value;
+      const btn   = document.getElementById('btn-login');
+      const erro  = document.getElementById('error-msg');
+
+      if (!email || !senha) {
+        erro.textContent = 'Preencha e-mail e senha.';
+        erro.classList.add('show');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Entrando...';
+      erro.classList.remove('show');
+
+      try {
+        const res = await fetch('/api/auth/login', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ email, senha })
+        });
+        const d = await res.json();
+        if (d.success) {
+          window.location.href = '/';
+        } else {
+          erro.textContent = d.error;
+          erro.classList.add('show');
+        }
+      } catch {
+        erro.textContent = 'Erro de conexão. Tente novamente.';
+        erro.classList.add('show');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Entrar';
+      }
+    }
+  </script>
+</body>
+</html>
