@@ -43,4 +43,8 @@ def create_app():
     from app.scheduler import iniciar_scheduler
     iniciar_scheduler(app)
 
+    # Cria tabelas automaticamente se não existirem
+    with app.app_context():
+        db.create_all()
+
     return app
