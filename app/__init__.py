@@ -40,11 +40,12 @@ def create_app():
     app.register_blueprint(auth_bp)
     app.register_blueprint(usr_bp)
 
-    from app.scheduler import iniciar_scheduler
-    iniciar_scheduler(app)
-
-    # Cria tabelas automaticamente se não existirem
+    # Cria tabelas ANTES do scheduler
     with app.app_context():
         db.create_all()
+        print("✅ Tabelas verificadas/criadas!")
+
+    from app.scheduler import iniciar_scheduler
+    iniciar_scheduler(app)
 
     return app
