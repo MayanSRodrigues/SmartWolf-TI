@@ -188,7 +188,8 @@ class Emprestimo(db.Model):
     def calcular_status(self):
         if self.data_hora_devolucao_real:
             return 'devolvido'
-        agora  = datetime.now()
+        from zoneinfo import ZoneInfo
+        agora  = datetime.now(ZoneInfo('America/Sao_Paulo')).replace(tzinfo=None)
         limite = self.data_hora_devolucao_prevista + timedelta(hours=1)
         if agora > limite:
             return 'em_atraso'
