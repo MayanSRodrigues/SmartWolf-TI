@@ -46,3 +46,18 @@ def api_logout():
 @login_required
 def api_me():
     return jsonify(current_user.to_dict())
+
+@bp.route('/api/setup', methods=['POST'])
+def api_setup():
+    if Usuario.query.count() > 0:
+        return jsonify({'error': 'Setup já realizado'}), 400
+    data = request.get_json()
+    u = Usuario(
+        nome  = data.get('nome', 'Admin'),
+        email = data.get('email'),
+        nivel = 'admin'
+    )
+    u.set_senha(data.get('senha'))
+    db.session.add(u)
+    db.session.commit()
+    return jsonify({'success': True, 'message': f'Usuário {u.email} criado!'})
