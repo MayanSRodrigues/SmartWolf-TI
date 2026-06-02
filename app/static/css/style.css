@@ -167,9 +167,10 @@ textarea { resize: vertical; min-height: 80px; }
 }
 
 .topbar {
-  padding: 20px 32px; border-bottom: 1px solid var(--border);
+  padding: 0 32px; border-bottom: 1px solid var(--border);
   display: flex; align-items: center; justify-content: space-between;
   background: var(--bg-card); position: sticky; top: 0; z-index: 50;
+  height: 72px; min-height: 72px;
 }
 
 .topbar-title { font-family: 'Outfit', sans-serif; font-size: 22px; font-weight: 700; }
@@ -557,8 +558,9 @@ select.btn {
 
 /* ══════════════════ LOGO TOPBAR CENTRALIZADA ══════════════════ */
 .topbar-logo-center {
-  height: 200px;
-  max-width: 160px;
+  height: 44px;
+  max-height: 44px;
+  max-width: 180px;
   width: auto;
   object-fit: contain;
   pointer-events: none;
