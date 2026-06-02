@@ -12,6 +12,23 @@ def api_categorias():
     cats = Categoria.query.order_by(Categoria.nome).all()
     return jsonify([c.to_dict() for c in cats])
 
+@bp.route('/api/categorias/seed', methods=['POST'])
+def api_seed_categorias():
+    if Categoria.query.count() > 0:
+        return jsonify({'message': 'Categorias já existem'})
+    categorias = [
+        {'nome': 'Audiovisual', 'icone': '📽️'},
+        {'nome': 'Informática', 'icone': '💻'},
+        {'nome': 'Rede',        'icone': '🌐'},
+        {'nome': 'Suprimentos', 'icone': '🔋'},
+        {'nome': 'Telefonia',   'icone': '📞'},
+        {'nome': 'Outros',      'icone': '📦'},
+    ]
+    for c in categorias:
+        db.session.add(Categoria(nome=c['nome'], icone=c['icone']))
+    db.session.commit()
+    return jsonify({'success': True, 'message': '6 categorias criadas!'})
+
 @bp.route('/api/categorias', methods=['POST'])
 @login_required
 def api_criar_categoria():
