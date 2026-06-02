@@ -3,45 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sistema de Empréstimos — TI UniFECAF & ColégioSER</title>
+  <title>SmartWolf TI — UniFECAF & ColégioSER</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
 
-<!-- ══════════════════ SIDEBAR ══════════════════ -->
 <aside class="sidebar">
   <div class="sidebar-logo">
     <div class="logo-badges">
       <span class="badge-fecaf">UniFECAF</span>
       <span class="badge-ser">ColégioSER</span>
     </div>
-    <div class="logo-title">Sistema de Empréstimos</div>
+    <div class="logo-title">SmartWolf TI</div>
     <div class="logo-sub">Departamento de TI</div>
   </div>
   <nav class="sidebar-nav">
     <div class="nav-label">Menu</div>
-    <button class="nav-item active" data-page="dashboard" onclick="navigate('dashboard')">
-      <span class="icon">📊</span> Dashboard
-    </button>
-    <button class="nav-item" data-page="emprestimos" onclick="navigate('emprestimos')">
-      <span class="icon">📋</span> Empréstimos
-    </button>
-    <button class="nav-item" data-page="equipamentos" onclick="navigate('equipamentos')">
-      <span class="icon">🖥️</span> Equipamentos
-    </button>
-    <button class="nav-item" data-page="relatorios" onclick="navigate('relatorios')">
-      <span class="icon">📈</span> Relatórios
-    </button>
-    <button class="nav-item" data-page="inventario" onclick="navigate('inventario')">
-      <span class="icon">📦</span> Inventário
-    </button>
-    <button class="nav-item" data-page="manutencoes" onclick="navigate('manutencoes')">
-      <span class="icon">🔧</span> Manutenções
-    </button>
+    <button class="nav-item active" data-page="dashboard" onclick="navigate('dashboard')"><span class="icon">📊</span> Dashboard</button>
+    <button class="nav-item" data-page="emprestimos" onclick="navigate('emprestimos')"><span class="icon">📋</span> Empréstimos</button>
+    <button class="nav-item" data-page="equipamentos" onclick="navigate('equipamentos')"><span class="icon">🖥️</span> Equipamentos</button>
+    <button class="nav-item" data-page="relatorios" onclick="navigate('relatorios')"><span class="icon">📈</span> Relatórios</button>
+    <button class="nav-item" data-page="inventario" onclick="navigate('inventario')"><span class="icon">📦</span> Inventário</button>
+    <button class="nav-item" data-page="manutencoes" onclick="navigate('manutencoes')"><span class="icon">🔧</span> Manutenções</button>
     <div id="menu-usuarios" style="display:none">
-      <button class="nav-item" data-page="usuarios" onclick="navigate('usuarios')">
-        <span class="icon">👥</span> Usuários
-      </button>
+      <button class="nav-item" data-page="usuarios" onclick="navigate('usuarios')"><span class="icon">👥</span> Usuários</button>
     </div>
   </nav>
   <div class="sidebar-footer">
@@ -50,47 +35,29 @@
     <div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.07)">
       <div style="font-size:12px;font-weight:600;color:#EDF2F7" id="usuario-nome">—</div>
       <div style="font-size:11px;color:#8899AA;margin-top:2px" id="usuario-nivel"></div>
-      <button onclick="fazerLogout()" style="margin-top:8px;width:100%;padding:6px;
-        background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);
-        border-radius:6px;color:#EF4444;font-size:12px;cursor:pointer;
-        font-family:'Inter',sans-serif;">⎋ Sair</button>
+      <button onclick="fazerLogout()" style="margin-top:8px;width:100%;padding:6px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:6px;color:#EF4444;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;">⎋ Sair</button>
     </div>
   </div>
 </aside>
 
-<!-- ══════════════════ MAIN ══════════════════ -->
 <main class="main">
   <div class="accent-strip"></div>
 
-  <!-- ── DASHBOARD ── -->
+  <!-- DASHBOARD -->
   <div class="page active" id="page-dashboard">
     <div class="topbar">
-      <div>
-        <div class="topbar-title">📊 Dashboard</div>
-        <div class="topbar-sub">Visão geral em tempo real</div>
-      </div>
+      <div><div class="topbar-title">📊 Dashboard</div><div class="topbar-sub">Visão geral em tempo real</div></div>
+      <img src="{{ url_for('static', filename='img/unifecaf.png') }}" class="topbar-logo-center" alt="UniFECAF">
       <div class="topbar-actions">
         <button class="btn btn-primary" onclick="navigate('emprestimos'); openModalEmprestimo()">＋ Novo Empréstimo</button>
       </div>
     </div>
     <div class="content">
       <div class="stats-grid">
-        <div class="stat-card total">
-          <div class="stat-label">Total de Empréstimos</div>
-          <div class="stat-value" id="stat-total">—</div>
-        </div>
-        <div class="stat-card ativo">
-          <div class="stat-label">Em Uso Agora</div>
-          <div class="stat-value" id="stat-ativos">—</div>
-        </div>
-        <div class="stat-card atrasado">
-          <div class="stat-label">Em Atraso</div>
-          <div class="stat-value" id="stat-atrasados">—</div>
-        </div>
-        <div class="stat-card devolvido">
-          <div class="stat-label">Devolvidos</div>
-          <div class="stat-value" id="stat-devolvidos">—</div>
-        </div>
+        <div class="stat-card total"><div class="stat-label">Total de Empréstimos</div><div class="stat-value" id="stat-total">—</div></div>
+        <div class="stat-card ativo"><div class="stat-label">Em Uso Agora</div><div class="stat-value" id="stat-ativos">—</div></div>
+        <div class="stat-card atrasado"><div class="stat-label">Em Atraso</div><div class="stat-value" id="stat-atrasados">—</div></div>
+        <div class="stat-card devolvido"><div class="stat-label">Devolvidos</div><div class="stat-value" id="stat-devolvidos">—</div></div>
       </div>
       <div class="table-wrap">
         <div class="table-header">
@@ -100,18 +67,11 @@
         <div class="table-scroll">
           <table>
             <thead><tr>
-              <th>Equipamento</th>
-              <th>Responsável</th>
-              <th>Local</th>
-              <th class="col-inst">Instituição</th>
-              <th>Entrega</th>
-              <th>Devolução Prevista</th>
-              <th>Status</th>
-              <th>Ações</th>
+              <th>Equipamento</th><th>Responsável</th><th>Local</th>
+              <th class="col-inst">Instituição</th><th>Entrega</th>
+              <th>Devolução Prevista</th><th>Status</th><th>Ações</th>
             </tr></thead>
-            <tbody id="dashboard-recent">
-              <tr><td colspan="8" class="loading-cell"><span class="loading-spinner"></span></td></tr>
-            </tbody>
+            <tbody id="dashboard-recent"><tr><td colspan="8" class="loading-cell"><span class="loading-spinner"></span></td></tr></tbody>
           </table>
         </div>
       </div>
@@ -119,46 +79,26 @@
         <div class="chart-card">
           <h4>⏰ Turnos de Referência</h4>
           <div class="turno-info">
-            <div class="turno-item">
-              <div>
-                <div class="turno-nome">🌅 Turno Manhã</div>
-                <div class="turno-hora">07:15 → 10:00</div>
-              </div>
-              <span class="badge badge-ativo">Atraso após 11:00</span>
-            </div>
-            <div class="turno-item">
-              <div>
-                <div class="turno-nome">🌙 Turno Noite</div>
-                <div class="turno-hora">19:15 → 22:00</div>
-              </div>
-              <span class="badge badge-ativo">Atraso após 23:00</span>
-            </div>
+            <div class="turno-item"><div><div class="turno-nome">🌅 Turno Manhã</div><div class="turno-hora">07:15 → 10:00</div></div><span class="badge badge-ativo">Atraso após 11:00</span></div>
+            <div class="turno-item"><div><div class="turno-nome">🌙 Turno Noite</div><div class="turno-hora">19:15 → 22:00</div></div><span class="badge badge-ativo">Atraso após 23:00</span></div>
           </div>
         </div>
         <div class="chart-card">
           <h4>🏫 Instituições Atendidas</h4>
           <div class="inst-info">
-            <div class="inst-item fecaf">
-              <div class="inst-nome">UniFECAF</div>
-              <div class="inst-sub">Centro Universitário Fecaf</div>
-            </div>
-            <div class="inst-item ser">
-              <div class="inst-nome">ColégioSER</div>
-              <div class="inst-sub">Colégio SER</div>
-            </div>
+            <div class="inst-item fecaf"><div class="inst-nome">UniFECAF</div><div class="inst-sub">Centro Universitário Fecaf</div></div>
+            <div class="inst-item ser"><div class="inst-nome">ColégioSER</div><div class="inst-sub">Colégio SER</div></div>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ── EMPRÉSTIMOS ── -->
+  <!-- EMPRÉSTIMOS -->
   <div class="page" id="page-emprestimos">
     <div class="topbar">
-      <div>
-        <div class="topbar-title">📋 Empréstimos</div>
-        <div class="topbar-sub">Controle de saída e devolução</div>
-      </div>
+      <div><div class="topbar-title">📋 Empréstimos</div><div class="topbar-sub">Controle de saída e devolução</div></div>
+      <img src="{{ url_for('static', filename='img/unifecaf.png') }}" class="topbar-logo-center" alt="UniFECAF">
       <div class="topbar-actions">
         <button class="btn btn-primary" onclick="openModalEmprestimo()">＋ Novo Empréstimo</button>
       </div>
@@ -173,8 +113,7 @@
         </div>
         <div class="search-wrap">
           <span class="search-icon">🔍</span>
-          <input type="text" id="busca-emp" placeholder="Buscar responsável, equipamento..."
-            oninput="termoBusca=this.value; loadEmprestimos()">
+          <input type="text" id="busca-emp" placeholder="Buscar responsável, equipamento..." oninput="termoBusca=this.value; loadEmprestimos()">
         </div>
       </div>
       <div class="table-wrap">
@@ -189,31 +128,22 @@
         <div class="table-scroll">
           <table>
             <thead><tr>
-              <th>Equipamento / Patrimônio</th>
-              <th>Responsável / E-mail</th>
-              <th>Local de Uso</th>
-              <th class="col-inst">Instituição</th>
-              <th>Entrega</th>
-              <th>Devolução Prevista / Real</th>
-              <th>Status</th>
-              <th>Ações</th>
+              <th>Equipamento / Patrimônio</th><th>Responsável / E-mail</th>
+              <th>Local de Uso</th><th class="col-inst">Instituição</th>
+              <th>Entrega</th><th>Devolução Prevista / Real</th><th>Status</th><th>Ações</th>
             </tr></thead>
-            <tbody id="emp-tbody">
-              <tr><td colspan="8" class="loading-cell"><span class="loading-spinner"></span></td></tr>
-            </tbody>
+            <tbody id="emp-tbody"><tr><td colspan="8" class="loading-cell"><span class="loading-spinner"></span></td></tr></tbody>
           </table>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ── EQUIPAMENTOS ── -->
+  <!-- EQUIPAMENTOS -->
   <div class="page" id="page-equipamentos">
     <div class="topbar">
-      <div>
-        <div class="topbar-title">🖥️ Equipamentos</div>
-        <div class="topbar-sub">Acervo de patrimônio do TI</div>
-      </div>
+      <div><div class="topbar-title">🖥️ Equipamentos</div><div class="topbar-sub">Acervo de patrimônio do TI</div></div>
+      <img src="{{ url_for('static', filename='img/unifecaf.png') }}" class="topbar-logo-center" alt="UniFECAF">
       <div class="topbar-actions">
         <button class="btn btn-primary" onclick="openModalEquipamento()">＋ Novo Equipamento</button>
       </div>
@@ -223,25 +153,19 @@
         <div class="table-header"><h3>Equipamentos Cadastrados</h3></div>
         <div class="table-scroll">
           <table>
-            <thead><tr>
-              <th>Nome</th><th>Nº Patrimônio</th><th>Descrição</th><th>Status</th><th>Ações</th>
-            </tr></thead>
-            <tbody id="equip-tbody">
-              <tr><td colspan="5" class="loading-cell"><span class="loading-spinner"></span></td></tr>
-            </tbody>
+            <thead><tr><th>Nome</th><th>Nº Patrimônio</th><th>Descrição</th><th>Status</th><th>Ações</th></tr></thead>
+            <tbody id="equip-tbody"><tr><td colspan="5" class="loading-cell"><span class="loading-spinner"></span></td></tr></tbody>
           </table>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ── RELATÓRIOS ── -->
+  <!-- RELATÓRIOS -->
   <div class="page" id="page-relatorios">
     <div class="topbar">
-      <div>
-        <div class="topbar-title">📈 Relatório Mensal</div>
-        <div class="topbar-sub">Análise de empréstimos por período</div>
-      </div>
+      <div><div class="topbar-title">📈 Relatório Mensal</div><div class="topbar-sub">Análise de empréstimos por período</div></div>
+      <img src="{{ url_for('static', filename='img/unifecaf.png') }}" class="topbar-logo-center" alt="UniFECAF">
       <div class="topbar-actions">
         <select id="rel-mes" class="btn btn-ghost" onchange="loadRelatorio()">
           <option value="1">Janeiro</option><option value="2">Fevereiro</option>
@@ -258,63 +182,33 @@
     </div>
     <div class="content">
       <div class="stats-grid">
-        <div class="stat-card total">
-          <div class="stat-label">Total no Mês</div>
-          <div class="stat-value" id="rel-total">—</div>
-        </div>
-        <div class="stat-card devolvido">
-          <div class="stat-label">Devolvidos</div>
-          <div class="stat-value" id="rel-devolvidos">—</div>
-        </div>
-        <div class="stat-card atrasado">
-          <div class="stat-label">Não Devolvidos</div>
-          <div class="stat-value" id="rel-nao-dev">—</div>
-        </div>
-        <div class="stat-card ativo">
-          <div class="stat-label">Em Atraso</div>
-          <div class="stat-value" id="rel-atrasados">—</div>
-        </div>
+        <div class="stat-card total"><div class="stat-label">Total no Mês</div><div class="stat-value" id="rel-total">—</div></div>
+        <div class="stat-card devolvido"><div class="stat-label">Devolvidos</div><div class="stat-value" id="rel-devolvidos">—</div></div>
+        <div class="stat-card atrasado"><div class="stat-label">Não Devolvidos</div><div class="stat-value" id="rel-nao-dev">—</div></div>
+        <div class="stat-card ativo"><div class="stat-label">Em Atraso</div><div class="stat-value" id="rel-atrasados">—</div></div>
       </div>
       <div class="charts-grid">
-        <div class="chart-card">
-          <h4>📦 Equipamentos mais emprestados</h4>
-          <div class="bar-chart" id="chart-equip"></div>
-        </div>
-        <div class="chart-card">
-          <h4>👤 Top Responsáveis</h4>
-          <div class="bar-chart" id="chart-resp"></div>
-        </div>
-        <div class="chart-card">
-          <h4>🏫 Por Instituição</h4>
-          <div class="bar-chart" id="chart-inst"></div>
-        </div>
+        <div class="chart-card"><h4>📦 Equipamentos mais emprestados</h4><div class="bar-chart" id="chart-equip"></div></div>
+        <div class="chart-card"><h4>👤 Top Responsáveis</h4><div class="bar-chart" id="chart-resp"></div></div>
+        <div class="chart-card"><h4>🏫 Por Instituição</h4><div class="bar-chart" id="chart-inst"></div></div>
       </div>
       <div class="table-wrap">
-        <div class="table-header">
-          <h3 class="titulo-atraso">⚠ Não Devolvidos no Período</h3>
-        </div>
+        <div class="table-header"><h3 class="titulo-atraso">⚠ Não Devolvidos no Período</h3></div>
         <div class="table-scroll">
           <table>
-            <thead><tr>
-              <th>Equipamento</th><th>Responsável</th><th>E-mail</th>
-              <th>Entrega</th><th>Devolução Prevista</th><th>Status</th>
-            </tr></thead>
-            <tbody id="rel-naodev-tbody">
-              <tr><td colspan="6" class="loading-cell"><span class="loading-spinner"></span></td></tr>
-            </tbody>
+            <thead><tr><th>Equipamento</th><th>Responsável</th><th>E-mail</th><th>Entrega</th><th>Devolução Prevista</th><th>Status</th></tr></thead>
+            <tbody id="rel-naodev-tbody"><tr><td colspan="6" class="loading-cell"><span class="loading-spinner"></span></td></tr></tbody>
           </table>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ── INVENTÁRIO ── -->
+  <!-- INVENTÁRIO -->
   <div class="page" id="page-inventario">
     <div class="topbar">
-      <div>
-        <div class="topbar-title">📦 Inventário</div>
-        <div class="topbar-sub">Controle completo do acervo de TI</div>
-      </div>
+      <div><div class="topbar-title">📦 Inventário</div><div class="topbar-sub">Controle completo do acervo de TI</div></div>
+      <img src="{{ url_for('static', filename='img/unifecaf.png') }}" class="topbar-logo-center" alt="UniFECAF">
       <div class="topbar-actions">
         <button class="btn btn-ghost" onclick="openModalMovimentacao()">↕ Movimentação</button>
         <button class="btn btn-primary" onclick="openModalEquipamentoInv()">＋ Novo Item</button>
@@ -322,22 +216,10 @@
     </div>
     <div class="content">
       <div class="stats-grid">
-        <div class="stat-card total">
-          <div class="stat-label">Total de Itens</div>
-          <div class="stat-value" id="inv-total">—</div>
-        </div>
-        <div class="stat-card ativo">
-          <div class="stat-label">Emprestáveis</div>
-          <div class="stat-value" id="inv-emprestavel">—</div>
-        </div>
-        <div class="stat-card devolvido">
-          <div class="stat-label">Fixos</div>
-          <div class="stat-value" id="inv-fixo">—</div>
-        </div>
-        <div class="stat-card atrasado">
-          <div class="stat-label">Estoque Baixo</div>
-          <div class="stat-value" id="inv-baixo">—</div>
-        </div>
+        <div class="stat-card total"><div class="stat-label">Total de Itens</div><div class="stat-value" id="inv-total">—</div></div>
+        <div class="stat-card ativo"><div class="stat-label">Emprestáveis</div><div class="stat-value" id="inv-emprestavel">—</div></div>
+        <div class="stat-card devolvido"><div class="stat-label">Fixos</div><div class="stat-value" id="inv-fixo">—</div></div>
+        <div class="stat-card atrasado"><div class="stat-label">Estoque Baixo</div><div class="stat-value" id="inv-baixo">—</div></div>
       </div>
       <div class="toolbar">
         <div class="filter-chips">
@@ -356,13 +238,8 @@
         <div class="table-header"><h3>Acervo de Equipamentos</h3></div>
         <div class="table-scroll">
           <table>
-            <thead><tr>
-              <th>Item</th><th>Categoria</th><th>Tipo</th><th>Patrimônio</th>
-              <th>Qtd</th><th>Localização</th><th>Garantia</th><th>Ações</th>
-            </tr></thead>
-            <tbody id="inv-tbody">
-              <tr><td colspan="8" class="loading-cell"><span class="loading-spinner"></span></td></tr>
-            </tbody>
+            <thead><tr><th>Item</th><th>Categoria</th><th>Tipo</th><th>Patrimônio</th><th>Qtd</th><th>Localização</th><th>Garantia</th><th>Ações</th></tr></thead>
+            <tbody id="inv-tbody"><tr><td colspan="8" class="loading-cell"><span class="loading-spinner"></span></td></tr></tbody>
           </table>
         </div>
       </div>
@@ -370,44 +247,28 @@
         <div class="table-header"><h3>📋 Últimas Movimentações</h3></div>
         <div class="table-scroll">
           <table>
-            <thead><tr>
-              <th>Data/Hora</th><th>Equipamento</th><th>Tipo</th>
-              <th>Quantidade</th><th>Motivo</th><th>Responsável</th>
-            </tr></thead>
-            <tbody id="mov-tbody">
-              <tr><td colspan="6" class="loading-cell"><span class="loading-spinner"></span></td></tr>
-            </tbody>
+            <thead><tr><th>Data/Hora</th><th>Equipamento</th><th>Tipo</th><th>Quantidade</th><th>Motivo</th><th>Responsável</th></tr></thead>
+            <tbody id="mov-tbody"><tr><td colspan="6" class="loading-cell"><span class="loading-spinner"></span></td></tr></tbody>
           </table>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ── MANUTENÇÕES ── -->
+  <!-- MANUTENÇÕES -->
   <div class="page" id="page-manutencoes">
     <div class="topbar">
-      <div>
-        <div class="topbar-title">🔧 Manutenções</div>
-        <div class="topbar-sub">Histórico e controle de manutenções</div>
-      </div>
+      <div><div class="topbar-title">🔧 Manutenções</div><div class="topbar-sub">Histórico e controle de manutenções</div></div>
+      <img src="{{ url_for('static', filename='img/unifecaf.png') }}" class="topbar-logo-center" alt="UniFECAF">
       <div class="topbar-actions">
         <button class="btn btn-primary" onclick="openModalManutencao()">＋ Nova Manutenção</button>
       </div>
     </div>
     <div class="content">
       <div class="stats-grid">
-        <div class="stat-card atrasado">
-          <div class="stat-label">Em Manutenção</div>
-          <div class="stat-value" id="man-em">—</div>
-        </div>
-        <div class="stat-card devolvido">
-          <div class="stat-label">Concluídas</div>
-          <div class="stat-value" id="man-concluidas">—</div>
-        </div>
-        <div class="stat-card total">
-          <div class="stat-label">Custo Total</div>
-          <div class="stat-value" id="man-custo" style="font-size:24px">—</div>
-        </div>
+        <div class="stat-card atrasado"><div class="stat-label">Em Manutenção</div><div class="stat-value" id="man-em">—</div></div>
+        <div class="stat-card devolvido"><div class="stat-label">Concluídas</div><div class="stat-value" id="man-concluidas">—</div></div>
+        <div class="stat-card total"><div class="stat-label">Custo Total</div><div class="stat-value" id="man-custo" style="font-size:24px">—</div></div>
       </div>
       <div class="toolbar">
         <div class="filter-chips">
@@ -421,26 +282,19 @@
         <div class="table-header"><h3>Registro de Manutenções</h3></div>
         <div class="table-scroll">
           <table>
-            <thead><tr>
-              <th>Equipamento</th><th>Tipo</th><th>Descrição</th><th>Técnico / Empresa</th>
-              <th>Entrada</th><th>Saída</th><th>Custo</th><th>Status</th><th>Ações</th>
-            </tr></thead>
-            <tbody id="man-tbody">
-              <tr><td colspan="9" class="loading-cell"><span class="loading-spinner"></span></td></tr>
-            </tbody>
+            <thead><tr><th>Equipamento</th><th>Tipo</th><th>Descrição</th><th>Técnico / Empresa</th><th>Entrada</th><th>Saída</th><th>Custo</th><th>Status</th><th>Ações</th></tr></thead>
+            <tbody id="man-tbody"><tr><td colspan="9" class="loading-cell"><span class="loading-spinner"></span></td></tr></tbody>
           </table>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ── USUÁRIOS ── -->
+  <!-- USUÁRIOS -->
   <div class="page" id="page-usuarios">
     <div class="topbar">
-      <div>
-        <div class="topbar-title">👥 Usuários</div>
-        <div class="topbar-sub">Gerenciamento da equipe de TI</div>
-      </div>
+      <div><div class="topbar-title">👥 Usuários</div><div class="topbar-sub">Gerenciamento da equipe de TI</div></div>
+      <img src="{{ url_for('static', filename='img/unifecaf.png') }}" class="topbar-logo-center" alt="UniFECAF">
       <div class="topbar-actions">
         <button class="btn btn-primary" onclick="openModalUsuario()">＋ Novo Usuário</button>
       </div>
@@ -450,38 +304,22 @@
         <div class="table-header"><h3>Equipe de TI</h3></div>
         <div class="table-scroll">
           <table>
-            <thead><tr>
-              <th>Nome</th><th>E-mail</th><th>Nível</th>
-              <th>Último Acesso</th><th>Status</th><th>Ações</th>
-            </tr></thead>
-            <tbody id="usr-tbody">
-              <tr><td colspan="6" class="loading-cell"><span class="loading-spinner"></span></td></tr>
-            </tbody>
+            <thead><tr><th>Nome</th><th>E-mail</th><th>Nível</th><th>Último Acesso</th><th>Status</th><th>Ações</th></tr></thead>
+            <tbody id="usr-tbody"><tr><td colspan="6" class="loading-cell"><span class="loading-spinner"></span></td></tr></tbody>
           </table>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ══════════════════ MODAIS ══════════════════ -->
-
-  <!-- Modal Chamado -->
+  <!-- MODAL CHAMADO -->
   <div class="modal-overlay" id="modal-emp" onclick="if(event.target===this) closeModalEmprestimo()">
     <div class="modal">
-      <div class="modal-header">
-        <h2>📋 Registrar Chamado</h2>
-        <button class="modal-close" onclick="closeModalEmprestimo()">✕</button>
-      </div>
+      <div class="modal-header"><h2>📋 Registrar Chamado</h2><button class="modal-close" onclick="closeModalEmprestimo()">✕</button></div>
       <form id="form-emp" onsubmit="salvarEmprestimo(event)">
         <div class="form-grid">
-          <div class="form-group">
-            <label>Responsável *</label>
-            <input type="text" id="f-responsavel" placeholder="Nome completo do professor" required>
-          </div>
-          <div class="form-group">
-            <label>E-mail *</label>
-            <input type="email" id="f-email" placeholder="email@instituicao.br" required>
-          </div>
+          <div class="form-group"><label>Responsável *</label><input type="text" id="f-responsavel" placeholder="Nome completo do professor" required></div>
+          <div class="form-group"><label>E-mail *</label><input type="email" id="f-email" placeholder="email@instituicao.br" required></div>
           <div class="form-group">
             <label>Unidade *</label>
             <select id="f-unidade" onchange="atualizarLocal()" required>
@@ -492,10 +330,7 @@
               <option value="Administrativo">Administrativo</option>
             </select>
           </div>
-          <div class="form-group">
-            <label>Sala / Ambiente</label>
-            <input type="text" id="f-local-especifico" placeholder="Ex: Sala 20, Lab de Informática..." oninput="atualizarLocal()">
-          </div>
+          <div class="form-group"><label>Sala / Ambiente</label><input type="text" id="f-local-especifico" placeholder="Ex: Sala 20, Lab de Informática..." oninput="atualizarLocal()"></div>
           <input type="hidden" id="f-local">
           <div class="form-group">
             <label>Instituição *</label>
@@ -514,23 +349,14 @@
               <div class="turno-pill" data-turno="outro" onclick="selecionarTurno('outro')">🕐 Outro horário</div>
             </div>
           </div>
-          <div class="form-group">
-            <label>Data/Hora de Entrega *</label>
-            <input type="datetime-local" id="f-entrega" required>
-          </div>
-          <div class="form-group">
-            <label>Devolução Prevista *</label>
-            <input type="datetime-local" id="f-devolucao" required>
-          </div>
+          <div class="form-group"><label>Data/Hora de Entrega *</label><input type="datetime-local" id="f-entrega" required></div>
+          <div class="form-group"><label>Devolução Prevista *</label><input type="datetime-local" id="f-devolucao" required></div>
           <div class="form-group full">
             <label>Equipamentos *</label>
             <div id="equipamentos-lista" style="display:flex;flex-direction:column;gap:8px;margin-bottom:8px"></div>
             <button type="button" class="btn btn-ghost btn-sm" onclick="adicionarLinhaEquipamento()">＋ Adicionar equipamento</button>
           </div>
-          <div class="form-group full">
-            <label>Observações</label>
-            <textarea id="f-obs" placeholder="Anotações adicionais..."></textarea>
-          </div>
+          <div class="form-group full"><label>Observações</label><textarea id="f-obs" placeholder="Anotações adicionais..."></textarea></div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-ghost" onclick="closeModalEmprestimo()">Cancelar</button>
@@ -540,28 +366,16 @@
     </div>
   </div>
 
-  <!-- Modal Equipamento -->
+  <!-- MODAL EQUIPAMENTO -->
   <div class="modal-overlay" id="modal-equip" onclick="if(event.target===this) closeModalEquipamento()">
     <div class="modal modal-sm">
-      <div class="modal-header">
-        <h2 id="equip-modal-title">🖥️ Novo Equipamento</h2>
-        <button class="modal-close" onclick="closeModalEquipamento()">✕</button>
-      </div>
+      <div class="modal-header"><h2 id="equip-modal-title">🖥️ Novo Equipamento</h2><button class="modal-close" onclick="closeModalEquipamento()">✕</button></div>
       <form id="form-equip" onsubmit="salvarEquipamento(event)">
         <input type="hidden" id="equip-modal-id">
         <div class="form-grid single">
-          <div class="form-group">
-            <label>Nome do Equipamento *</label>
-            <input type="text" id="eq-nome" placeholder="Ex: Projetor Epson, Notebook Dell..." required>
-          </div>
-          <div class="form-group">
-            <label>Número de Patrimônio</label>
-            <input type="text" id="eq-patrimonio" placeholder="Ex: TI-001, PAT-2024-05">
-          </div>
-          <div class="form-group">
-            <label>Descrição</label>
-            <textarea id="eq-descricao" placeholder="Modelo, especificações..."></textarea>
-          </div>
+          <div class="form-group"><label>Nome do Equipamento *</label><input type="text" id="eq-nome" placeholder="Ex: Projetor Epson, Notebook Dell..." required></div>
+          <div class="form-group"><label>Número de Patrimônio</label><input type="text" id="eq-patrimonio" placeholder="Ex: TI-001, PAT-2024-05"></div>
+          <div class="form-group"><label>Descrição</label><textarea id="eq-descricao" placeholder="Modelo, especificações..."></textarea></div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-ghost" onclick="closeModalEquipamento()">Cancelar</button>
@@ -571,76 +385,27 @@
     </div>
   </div>
 
-  <!-- Modal Inventário -->
+  <!-- MODAL INVENTÁRIO -->
   <div class="modal-overlay" id="modal-equip-inv" onclick="if(event.target===this) closeModalEquipamentoInv()">
     <div class="modal">
-      <div class="modal-header">
-        <h2 id="equip-inv-title">📦 Novo Item no Inventário</h2>
-        <button class="modal-close" onclick="closeModalEquipamentoInv()">✕</button>
-      </div>
+      <div class="modal-header"><h2 id="equip-inv-title">📦 Novo Item no Inventário</h2><button class="modal-close" onclick="closeModalEquipamentoInv()">✕</button></div>
       <form id="form-equip-inv" onsubmit="salvarEquipamentoInv(event)">
         <input type="hidden" id="equip-inv-id">
         <div class="form-grid">
-          <div class="form-group">
-            <label>Nome *</label>
-            <input type="text" id="inv-nome" placeholder="Ex: Notebook Dell Inspiron" required>
-          </div>
-          <div class="form-group">
-            <label>Nº Patrimônio</label>
-            <input type="text" id="inv-patrimonio" placeholder="Ex: TI-001 (opcional)">
-          </div>
-          <div class="form-group">
-            <label>Categoria</label>
-            <select id="inv-categoria"><option value="">Selecione...</option></select>
-          </div>
-          <div class="form-group">
-            <label>Tipo *</label>
-            <select id="inv-tipo" required>
-              <option value="emprestavel">🔄 Emprestável</option>
-              <option value="fixo">📌 Fixo</option>
-              <option value="suprimento">🔋 Suprimento</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Quantidade</label>
-            <input type="number" id="inv-quantidade" value="1" min="0">
-          </div>
-          <div class="form-group">
-            <label>Qtd Mínima (alerta)</label>
-            <input type="number" id="inv-qtd-min" value="1" min="0">
-          </div>
-          <div class="form-group">
-            <label>Localização</label>
-            <input type="text" id="inv-localizacao" placeholder="Ex: Armário TI, Sala 01">
-          </div>
-          <div class="form-group">
-            <label>Fornecedor</label>
-            <input type="text" id="inv-fornecedor" placeholder="Nome do fornecedor">
-          </div>
-          <div class="form-group">
-            <label>Nota Fiscal</label>
-            <input type="text" id="inv-nota-fiscal" placeholder="Nº da nota fiscal">
-          </div>
-          <div class="form-group">
-            <label>Contrato de Manutenção</label>
-            <input type="text" id="inv-contrato" placeholder="Nº do contrato">
-          </div>
-          <div class="form-group">
-            <label>Data de Compra</label>
-            <input type="date" id="inv-data-compra">
-          </div>
-          <div class="form-group">
-            <label>Garantia até</label>
-            <input type="date" id="inv-garantia">
-          </div>
-          <div class="form-group">
-            <label>Valor de Compra (R$)</label>
-            <input type="number" id="inv-valor" step="0.01" placeholder="0,00">
-          </div>
-          <div class="form-group full">
-            <label>Descrição</label>
-            <textarea id="inv-descricao" placeholder="Especificações, observações..."></textarea>
-          </div>
+          <div class="form-group"><label>Nome *</label><input type="text" id="inv-nome" placeholder="Ex: Notebook Dell Inspiron" required></div>
+          <div class="form-group"><label>Nº Patrimônio</label><input type="text" id="inv-patrimonio" placeholder="Ex: TI-001 (opcional)"></div>
+          <div class="form-group"><label>Categoria</label><select id="inv-categoria"><option value="">Selecione...</option></select></div>
+          <div class="form-group"><label>Tipo *</label><select id="inv-tipo" required><option value="emprestavel">🔄 Emprestável</option><option value="fixo">📌 Fixo</option><option value="suprimento">🔋 Suprimento</option></select></div>
+          <div class="form-group"><label>Quantidade</label><input type="number" id="inv-quantidade" value="1" min="0"></div>
+          <div class="form-group"><label>Qtd Mínima (alerta)</label><input type="number" id="inv-qtd-min" value="1" min="0"></div>
+          <div class="form-group"><label>Localização</label><input type="text" id="inv-localizacao" placeholder="Ex: Armário TI, Sala 01"></div>
+          <div class="form-group"><label>Fornecedor</label><input type="text" id="inv-fornecedor" placeholder="Nome do fornecedor"></div>
+          <div class="form-group"><label>Nota Fiscal</label><input type="text" id="inv-nota-fiscal" placeholder="Nº da nota fiscal"></div>
+          <div class="form-group"><label>Contrato de Manutenção</label><input type="text" id="inv-contrato" placeholder="Nº do contrato"></div>
+          <div class="form-group"><label>Data de Compra</label><input type="date" id="inv-data-compra"></div>
+          <div class="form-group"><label>Garantia até</label><input type="date" id="inv-garantia"></div>
+          <div class="form-group"><label>Valor de Compra (R$)</label><input type="number" id="inv-valor" step="0.01" placeholder="0,00"></div>
+          <div class="form-group full"><label>Descrição</label><textarea id="inv-descricao" placeholder="Especificações, observações..."></textarea></div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-ghost" onclick="closeModalEquipamentoInv()">Cancelar</button>
@@ -650,42 +415,18 @@
     </div>
   </div>
 
-  <!-- Modal Movimentação -->
+  <!-- MODAL MOVIMENTAÇÃO -->
   <div class="modal-overlay" id="modal-movimentacao" onclick="if(event.target===this) closeModalMovimentacao()">
     <div class="modal modal-sm">
-      <div class="modal-header">
-        <h2>↕ Registrar Movimentação</h2>
-        <button class="modal-close" onclick="closeModalMovimentacao()">✕</button>
-      </div>
+      <div class="modal-header"><h2>↕ Registrar Movimentação</h2><button class="modal-close" onclick="closeModalMovimentacao()">✕</button></div>
       <form id="form-mov" onsubmit="salvarMovimentacao(event)">
         <div class="form-grid single">
-          <div class="form-group">
-            <label>Equipamento *</label>
-            <div id="mov-equip-wrapper"></div>
-          </div>
-          <div class="form-group">
-            <label>Tipo *</label>
-            <select id="mov-tipo" required>
-              <option value="entrada">📥 Entrada</option>
-              <option value="saida">📤 Saída</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Quantidade *</label>
-            <input type="number" id="mov-quantidade" value="1" min="1" required>
-          </div>
-          <div class="form-group">
-            <label>Motivo</label>
-            <input type="text" id="mov-motivo" placeholder="Ex: Compra, Descarte, Transferência">
-          </div>
-          <div class="form-group">
-            <label>Responsável</label>
-            <input type="text" id="mov-responsavel" placeholder="Quem autorizou">
-          </div>
-          <div class="form-group">
-            <label>Observações</label>
-            <textarea id="mov-obs" placeholder="Detalhes adicionais..."></textarea>
-          </div>
+          <div class="form-group"><label>Equipamento *</label><div id="mov-equip-wrapper"></div></div>
+          <div class="form-group"><label>Tipo *</label><select id="mov-tipo" required><option value="entrada">📥 Entrada</option><option value="saida">📤 Saída</option></select></div>
+          <div class="form-group"><label>Quantidade *</label><input type="number" id="mov-quantidade" value="1" min="1" required></div>
+          <div class="form-group"><label>Motivo</label><input type="text" id="mov-motivo" placeholder="Ex: Compra, Descarte, Transferência"></div>
+          <div class="form-group"><label>Responsável</label><input type="text" id="mov-responsavel" placeholder="Quem autorizou"></div>
+          <div class="form-group"><label>Observações</label><textarea id="mov-obs" placeholder="Detalhes adicionais..."></textarea></div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-ghost" onclick="closeModalMovimentacao()">Cancelar</button>
@@ -695,64 +436,23 @@
     </div>
   </div>
 
-  <!-- Modal Manutenção -->
+  <!-- MODAL MANUTENÇÃO -->
   <div class="modal-overlay" id="modal-manutencao" onclick="if(event.target===this) closeModalManutencao()">
     <div class="modal">
-      <div class="modal-header">
-        <h2 id="man-modal-title">🔧 Nova Manutenção</h2>
-        <button class="modal-close" onclick="closeModalManutencao()">✕</button>
-      </div>
+      <div class="modal-header"><h2 id="man-modal-title">🔧 Nova Manutenção</h2><button class="modal-close" onclick="closeModalManutencao()">✕</button></div>
       <form id="form-man" onsubmit="salvarManutencao(event)">
         <input type="hidden" id="man-modal-id">
         <div class="form-grid">
-          <div class="form-group full">
-            <label>Equipamento *</label>
-            <div id="man-equip-wrapper"></div>
-          </div>
-          <div class="form-group">
-            <label>Tipo *</label>
-            <select id="man-tipo" required>
-              <option value="corretiva">🔴 Corretiva</option>
-              <option value="preventiva">🟡 Preventiva</option>
-              <option value="garantia">🟢 Garantia</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Status</label>
-            <select id="man-status">
-              <option value="em_manutencao">🔧 Em Manutenção</option>
-              <option value="concluida">✓ Concluída</option>
-              <option value="cancelada">✕ Cancelada</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Técnico</label>
-            <input type="text" id="man-tecnico" placeholder="Nome do técnico">
-          </div>
-          <div class="form-group">
-            <label>Empresa</label>
-            <input type="text" id="man-empresa" placeholder="Nome da empresa">
-          </div>
-          <div class="form-group">
-            <label>Data de Entrada *</label>
-            <input type="datetime-local" id="man-entrada" required>
-          </div>
-          <div class="form-group">
-            <label>Data de Saída</label>
-            <input type="datetime-local" id="man-saida">
-          </div>
-          <div class="form-group">
-            <label>Custo (R$)</label>
-            <input type="number" id="man-custo-input" step="0.01" placeholder="0,00">
-          </div>
-          <div class="form-group full">
-            <label>Descrição do Problema *</label>
-            <textarea id="man-descricao" placeholder="Descreva o problema ou serviço realizado..." required></textarea>
-          </div>
-          <div class="form-group full">
-            <label>Observações</label>
-            <textarea id="man-obs" placeholder="Informações adicionais..."></textarea>
-          </div>
+          <div class="form-group full"><label>Equipamento *</label><div id="man-equip-wrapper"></div></div>
+          <div class="form-group"><label>Tipo *</label><select id="man-tipo" required><option value="corretiva">🔴 Corretiva</option><option value="preventiva">🟡 Preventiva</option><option value="garantia">🟢 Garantia</option></select></div>
+          <div class="form-group"><label>Status</label><select id="man-status"><option value="em_manutencao">🔧 Em Manutenção</option><option value="concluida">✓ Concluída</option><option value="cancelada">✕ Cancelada</option></select></div>
+          <div class="form-group"><label>Técnico</label><input type="text" id="man-tecnico" placeholder="Nome do técnico"></div>
+          <div class="form-group"><label>Empresa</label><input type="text" id="man-empresa" placeholder="Nome da empresa"></div>
+          <div class="form-group"><label>Data de Entrada *</label><input type="datetime-local" id="man-entrada" required></div>
+          <div class="form-group"><label>Data de Saída</label><input type="datetime-local" id="man-saida"></div>
+          <div class="form-group"><label>Custo (R$)</label><input type="number" id="man-custo-input" step="0.01" placeholder="0,00"></div>
+          <div class="form-group full"><label>Descrição do Problema *</label><textarea id="man-descricao" placeholder="Descreva o problema ou serviço realizado..." required></textarea></div>
+          <div class="form-group full"><label>Observações</label><textarea id="man-obs" placeholder="Informações adicionais..."></textarea></div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-ghost" onclick="closeModalManutencao()">Cancelar</button>
@@ -762,19 +462,13 @@
     </div>
   </div>
 
-  <!-- Modal Adicionar Item ao Chamado -->
+  <!-- MODAL ADICIONAR ITEM AO CHAMADO -->
   <div class="modal-overlay" id="modal-add-item" onclick="if(event.target===this) closeModalAddItem()">
     <div class="modal modal-sm">
-      <div class="modal-header">
-        <h2>＋ Adicionar Equipamento ao Chamado</h2>
-        <button class="modal-close" onclick="closeModalAddItem()">✕</button>
-      </div>
+      <div class="modal-header"><h2>＋ Adicionar Equipamento ao Chamado</h2><button class="modal-close" onclick="closeModalAddItem()">✕</button></div>
       <div class="form-grid single" style="padding:4px 0 16px">
         <input type="hidden" id="add-item-chamado-id">
-        <div class="form-group">
-          <label>Equipamento *</label>
-          <div id="add-item-equip-wrapper"></div>
-        </div>
+        <div class="form-group"><label>Equipamento *</label><div id="add-item-equip-wrapper"></div></div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-ghost" onclick="closeModalAddItem()">Cancelar</button>
@@ -783,35 +477,17 @@
     </div>
   </div>
 
-  <!-- Modal Usuário -->
+  <!-- MODAL USUÁRIO -->
   <div class="modal-overlay" id="modal-usuario" onclick="if(event.target===this) closeModalUsuario()">
     <div class="modal modal-sm">
-      <div class="modal-header">
-        <h2 id="usr-modal-title">👥 Novo Usuário</h2>
-        <button class="modal-close" onclick="closeModalUsuario()">✕</button>
-      </div>
+      <div class="modal-header"><h2 id="usr-modal-title">👥 Novo Usuário</h2><button class="modal-close" onclick="closeModalUsuario()">✕</button></div>
       <form id="form-usr" onsubmit="salvarUsuario(event)">
         <input type="hidden" id="usr-modal-id">
         <div class="form-grid single">
-          <div class="form-group">
-            <label>Nome *</label>
-            <input type="text" id="usr-nome" placeholder="Nome completo" required>
-          </div>
-          <div class="form-group">
-            <label>E-mail *</label>
-            <input type="email" id="usr-email" placeholder="email@instituicao.com.br" required>
-          </div>
-          <div class="form-group">
-            <label>Nível *</label>
-            <select id="usr-nivel" required>
-              <option value="tecnico">🔧 Técnico</option>
-              <option value="admin">👑 Admin</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label id="usr-senha-label">Senha *</label>
-            <input type="password" id="usr-senha" placeholder="Mínimo 6 caracteres">
-          </div>
+          <div class="form-group"><label>Nome *</label><input type="text" id="usr-nome" placeholder="Nome completo" required></div>
+          <div class="form-group"><label>E-mail *</label><input type="email" id="usr-email" placeholder="email@instituicao.com.br" required></div>
+          <div class="form-group"><label>Nível *</label><select id="usr-nivel" required><option value="tecnico">🔧 Técnico</option><option value="admin">👑 Admin</option></select></div>
+          <div class="form-group"><label id="usr-senha-label">Senha *</label><input type="password" id="usr-senha" placeholder="Mínimo 6 caracteres"></div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-ghost" onclick="closeModalUsuario()">Cancelar</button>
@@ -821,7 +497,6 @@
     </div>
   </div>
 
-  <!-- TOASTS -->
   <div class="toast-container" id="toast-container"></div>
 
 </main>
@@ -836,6 +511,5 @@
     if (anoEl) anoEl.value = now.getFullYear();
   });
 </script>
-
 </body>
 </html>
