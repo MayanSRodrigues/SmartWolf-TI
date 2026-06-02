@@ -554,3 +554,13 @@ select.btn {
   th, td   { padding: 10px 8px; font-size: 12px; }
   .stat-value { font-size: 28px; }
 }
+
+/* ══════════════════ LOGO TOPBAR CENTRALIZADA ══════════════════ */
+.topbar-logo-center {
+  height: 38px;
+  max-width: 160px;
+  width: auto;
+  object-fit: contain;
+  pointer-events: none;
+  opacity: 0.9;
+}
