@@ -566,3 +566,20 @@ select.btn {
   pointer-events: none;
   opacity: 0.9;
 }
+
+/* ══════════════════ TOPBAR INVENTÁRIO ══════════════════ */
+#page-inventario .topbar {
+  justify-content: space-between;
+}
+
+#page-inventario .topbar-logo-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+#page-inventario .topbar {
+  position: sticky;
+  top: 0;
+}
