@@ -1199,9 +1199,46 @@ async function toggleUsuario(id, ativo) {
   } catch { toast('Erro.', 'error'); }
 }
 
+// ══════════════════ TEMA ══════════════════
+
+function alternarTema() {
+  const body = document.body;
+  const btn  = document.getElementById('btn-tema');
+  const temaClaro = body.classList.toggle('tema-claro');
+
+  if (temaClaro) {
+    btn.textContent = '🌙 Tema Escuro';
+    btn.style.color = '#4A5568';
+    btn.style.background = 'rgba(0,0,0,0.05)';
+    btn.style.borderColor = 'rgba(0,0,0,0.12)';
+    localStorage.setItem('tema', 'claro');
+  } else {
+    btn.textContent = '☀️ Tema Claro';
+    btn.style.color = '#60B8FF';
+    btn.style.background = 'rgba(0,102,179,0.1)';
+    btn.style.borderColor = 'rgba(0,102,179,0.3)';
+    localStorage.setItem('tema', 'escuro');
+  }
+}
+
+function carregarTema() {
+  const tema = localStorage.getItem('tema');
+  if (tema === 'claro') {
+    document.body.classList.add('tema-claro');
+    const btn = document.getElementById('btn-tema');
+    if (btn) {
+      btn.textContent = '🌙 Tema Escuro';
+      btn.style.color = '#4A5568';
+      btn.style.background = 'rgba(0,0,0,0.05)';
+      btn.style.borderColor = 'rgba(0,0,0,0.12)';
+    }
+  }
+}
+
 // ══════════════════ INICIALIZAÇÃO ══════════════════
 
 document.addEventListener('DOMContentLoaded', () => {
+  carregarTema();
   carregarUsuarioLogado();
   navigate('dashboard');
   setInterval(() => {

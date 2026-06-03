@@ -583,3 +583,106 @@ select.btn {
   position: sticky;
   top: 0;
 }
+
+/* ══════════════════ TEMA CLARO ══════════════════ */
+body.tema-claro {
+  background: #F0F4F8;
+}
+
+body.tema-claro::before {
+  background:
+    radial-gradient(ellipse at 0% 0%,    rgba(0,102,179,0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 100% 100%, rgba(0,166,81,0.06)  0%, transparent 50%),
+    radial-gradient(ellipse at 100% 0%,  rgba(0,196,98,0.04)  0%, transparent 40%),
+    radial-gradient(ellipse at 0% 100%,  rgba(0,76,140,0.05)  0%, transparent 40%);
+}
+
+body.tema-claro {
+  --bg:       #F0F4F8;
+  --bg-card:  #FFFFFF;
+  --bg-card2: #EBF0F6;
+  --border:        rgba(0,0,0,0.08);
+  --border-hover:  rgba(0,0,0,0.16);
+  --text:          #1A2332;
+  --text-muted:    #4A5568;
+  --text-dim:      #718096;
+}
+
+body.tema-claro .sidebar {
+  background: #FFFFFF;
+  border-right: 1px solid rgba(0,0,0,0.08);
+  box-shadow: 2px 0 12px rgba(0,0,0,0.06);
+}
+
+body.tema-claro .topbar {
+  background: #FFFFFF;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+body.tema-claro .stat-card {
+  background: #FFFFFF;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+body.tema-claro .table-wrap {
+  background: #FFFFFF;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+body.tema-claro thead tr {
+  background: #EBF0F6;
+}
+
+body.tema-claro .chart-card {
+  background: #FFFFFF;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+body.tema-claro .modal {
+  background: #FFFFFF;
+}
+
+body.tema-claro input,
+body.tema-claro select,
+body.tema-claro textarea {
+  background: #F0F4F8;
+  border-color: rgba(0,0,0,0.12);
+  color: #1A2332;
+}
+
+body.tema-claro .btn-ghost {
+  background: #EBF0F6;
+  color: #4A5568;
+  border-color: rgba(0,0,0,0.12);
+}
+
+body.tema-claro .nav-item:hover {
+  background: #EBF0F6;
+}
+
+body.tema-claro .chip {
+  background: #EBF0F6;
+  border-color: rgba(0,0,0,0.12);
+  color: #4A5568;
+}
+
+body.tema-claro .turno-pill {
+  background: #EBF0F6;
+  border-color: rgba(0,0,0,0.12);
+  color: #4A5568;
+}
+
+body.tema-claro .search-wrap input[type="text"] {
+  background: #EBF0F6 !important;
+  border-color: rgba(0,0,0,0.12) !important;
+  color: #1A2332 !important;
+}
+
+body.tema-claro .loading-spinner {
+  border-color: rgba(0,0,0,0.1);
+  border-top-color: var(--fecaf-primary);
+}
+
+body.tema-claro tr:hover td {
+  background: rgba(0,102,179,0.03);
+}
