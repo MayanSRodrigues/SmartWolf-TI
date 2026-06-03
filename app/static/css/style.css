@@ -564,7 +564,7 @@ select.btn {
   width: auto;
   object-fit: contain;
   pointer-events: none;
-  opacity: 0.9;
+  opacity: 1.0;
 }
 
 /* ══════════════════ TOPBAR INVENTÁRIO ══════════════════ */
