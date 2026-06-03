@@ -558,8 +558,8 @@ select.btn {
 
 /* ══════════════════ LOGO TOPBAR CENTRALIZADA ══════════════════ */
 .topbar-logo-center {
-  height: 44px;
-  max-height: 44px;
+  height: 90px;
+  max-height: 90px;
   max-width: 180px;
   width: auto;
   object-fit: contain;
