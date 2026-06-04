@@ -30,3 +30,6 @@ class Config:
 
     # Fuso horário
     TIMEZONE = 'America/Sao_Paulo'
+
+    # Timeout de inatividade em minutos (ajuste aqui quando necessário)
+    SESSION_TIMEOUT_MINUTOS = 60

@@ -1235,12 +1235,31 @@ function carregarTema() {
   }
 }
 
+// ══════════════════ TIMEOUT DE INATIVIDADE ══════════════════
+
+const TIMEOUT_MINUTOS = 60; // Altere aqui para ajustar o tempo
+let timerInatividade;
+
+function resetarTimer() {
+  clearTimeout(timerInatividade);
+  timerInatividade = setTimeout(async () => {
+    await fetch('/api/auth/logout', { method: 'POST' });
+    window.location.href = '/login?motivo=inatividade';
+  }, TIMEOUT_MINUTOS * 60 * 1000);
+}
+
+// Reinicia o timer a cada interação do usuário
+['mousemove', 'keydown', 'click', 'scroll', 'touchstart'].forEach(evento => {
+  document.addEventListener(evento, resetarTimer, { passive: true });
+});
+
 // ══════════════════ INICIALIZAÇÃO ══════════════════
 
 document.addEventListener('DOMContentLoaded', () => {
   carregarTema();
   carregarUsuarioLogado();
   navigate('dashboard');
+  resetarTimer();
   setInterval(() => {
     const paginaAtiva = document.querySelector('.page.active')?.id?.replace('page-', '');
     if (paginaAtiva) loadPage(paginaAtiva);

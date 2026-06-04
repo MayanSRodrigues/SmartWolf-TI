@@ -200,6 +200,16 @@
   </div>
 
   <script>
+    // Mostra aviso se deslogou por inatividade
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('motivo') === 'inatividade') {
+      const erro = document.getElementById('error-msg');
+      erro.textContent = '⏱ Sessão encerrada por inatividade. Faça login novamente.';
+      erro.style.background = 'rgba(255,107,0,0.1)';
+      erro.style.borderColor = 'rgba(255,107,0,0.3)';
+      erro.style.color = '#FF8C00';
+      erro.classList.add('show');
+    }
     async function fazerLogin() {
       const email = document.getElementById('login-email').value.trim();
       const senha = document.getElementById('login-senha').value;
