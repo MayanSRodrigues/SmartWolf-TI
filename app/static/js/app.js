@@ -802,7 +802,7 @@ async function salvarEquipamentoInv(event) {
         method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload)
       });
     } else {
-      res = await fetch('/api/equipamentos', {
+      res = await fetch('/api/inventario', {
         method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload)
       });
     }
