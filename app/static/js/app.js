@@ -1607,6 +1607,11 @@ function closeModalSuporte() {
 
 async function salvarSuporte(event) {
   event.preventDefault();
+  const btn = event.submitter || document.querySelector('#form-suporte button[type="submit"]');
+  if (btn.disabled) return;
+  btn.disabled = true;
+  btn.textContent = 'Salvando...';
+
   const id = document.getElementById('suporte-modal-id').value;
   const payload = {
     titulo:            document.getElementById('sup-titulo').value,
@@ -1620,19 +1625,24 @@ async function salvarSuporte(event) {
     tecnico_id:        document.getElementById('sup-tecnico').value || null,
   };
 
-  const url    = id ? `/api/suporte/chamados/${id}` : '/api/suporte/chamados';
-  const method = id ? 'PUT' : 'POST';
-  const res    = await fetch(url, {
-    method, headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload)
-  }).then(r => r.json());
+  try {
+    const url    = id ? `/api/suporte/chamados/${id}` : '/api/suporte/chamados';
+    const method = id ? 'PUT' : 'POST';
+    const res    = await fetch(url, {
+      method, headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload)
+    }).then(r => r.json());
 
-  if (res.success) {
-    toast(id ? 'Chamado atualizado!' : 'Chamado aberto!', 'success');
-    closeModalSuporte();
-    if (id) abrirDetalhe(parseInt(id));
-    else loadSuporte();
-  } else {
-    toast('Erro ao salvar chamado', 'error');
+    if (res.success) {
+      toast(id ? 'Chamado atualizado!' : 'Chamado aberto!', 'success');
+      closeModalSuporte();
+      if (id) abrirDetalhe(parseInt(id));
+      else loadSuporte();
+    } else {
+      toast('Erro ao salvar chamado', 'error');
+    }
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Abrir Chamado';
   }
 }
 
