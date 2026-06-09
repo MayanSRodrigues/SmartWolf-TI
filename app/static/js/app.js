@@ -1492,17 +1492,17 @@ async function mudarStatus(novoStatus) {
     body: JSON.stringify({status: novoStatus})
   }).then(r => r.json());
   if (res.success) {
-    showToast('Status atualizado!', 'success');
+    toast('Status atualizado!', 'success');
     abrirDetalhe(chamadoSuporteAtual.id);
   } else {
-    showToast('Erro ao atualizar status', 'error');
+    toast('Erro ao atualizar status', 'error');
   }
 }
 
 async function pegarChamado(id) {
   const res = await fetch(`/api/suporte/chamados/${id}/pegar`, {method:'POST'}).then(r => r.json());
-  if (res.success) { showToast('Chamado assumido!', 'success'); loadSuporte(); }
-  else showToast('Erro ao assumir chamado', 'error');
+  if (res.success) { toast('Chamado assumido!', 'success'); loadSuporte(); }
+  else toast('Erro ao assumir chamado', 'error');
 }
 
 // ── COMENTÁRIO ────────────────────────────────────────────────
@@ -1548,7 +1548,7 @@ async function enviarComentario() {
   if (!chamadoSuporteAtual) return;
   const texto   = document.getElementById('novo-comentario').value.trim();
   const interno = document.getElementById('comentario-interno').checked;
-  if (!texto) { showToast('Digite uma mensagem', 'error'); return; }
+  if (!texto) { toast('Digite uma mensagem', 'error'); return; }
 
   const anexos = await Promise.all(arquivosParaEnviar.map(async f => ({
     nome:  f.name,
@@ -1563,13 +1563,13 @@ async function enviarComentario() {
   }).then(r => r.json());
 
   if (res.success) {
-    showToast('Atualização enviada!', 'success');
+    toast('Atualização enviada!', 'success');
     document.getElementById('novo-comentario').value = '';
     limparArquivos();
     document.getElementById('comentario-interno').checked = false;
     abrirDetalhe(chamadoSuporteAtual.id);
   } else {
-    showToast('Erro ao enviar atualização', 'error');
+    toast('Erro ao enviar atualização', 'error');
   }
 }
 
@@ -1627,12 +1627,12 @@ async function salvarSuporte(event) {
   }).then(r => r.json());
 
   if (res.success) {
-    showToast(id ? 'Chamado atualizado!' : 'Chamado aberto!', 'success');
+    toast(id ? 'Chamado atualizado!' : 'Chamado aberto!', 'success');
     closeModalSuporte();
     if (id) abrirDetalhe(parseInt(id));
     else loadSuporte();
   } else {
-    showToast('Erro ao salvar chamado', 'error');
+    toast('Erro ao salvar chamado', 'error');
   }
 }
 
@@ -1648,18 +1648,18 @@ function closeModalAtribuir() {
 async function confirmarAtribuir() {
   if (!chamadoSuporteAtual) return;
   const tecnico_id = document.getElementById('atribuir-tecnico-select').value;
-  if (!tecnico_id) { showToast('Selecione um técnico', 'error'); return; }
+  if (!tecnico_id) { toast('Selecione um técnico', 'error'); return; }
   const res = await fetch(`/api/suporte/chamados/${chamadoSuporteAtual.id}/atribuir`, {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({adicionar_tecnico_id: tecnico_id})
   }).then(r => r.json());
   if (res.success) {
-    showToast('Técnico atribuído!', 'success');
+    toast('Técnico atribuído!', 'success');
     closeModalAtribuir();
     abrirDetalhe(chamadoSuporteAtual.id);
   } else {
-    showToast('Erro ao atribuir técnico', 'error');
+    toast('Erro ao atribuir técnico', 'error');
   }
 }
 
