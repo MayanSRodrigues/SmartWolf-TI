@@ -26,6 +26,9 @@
     <button class="nav-item" data-page="inventario" onclick="navigate('inventario')"><span class="icon">📦</span> Inventário</button>
     <button class="nav-item" data-page="manutencoes" onclick="navigate('manutencoes')"><span class="icon">🔧</span> Manutenções</button>
     <div id="menu-usuarios" style="display:none">
+      <button class="nav-item" data-page="suporte" onclick="navigate('suporte')">
+      <span class="icon">🎫</span> Suporte
+    </button>
       <button class="nav-item" data-page="usuarios" onclick="navigate('usuarios')"><span class="icon">👥</span> Usuários</button>
     </div>
   </nav>
@@ -309,6 +312,251 @@
             <tbody id="usr-tbody"><tr><td colspan="6" class="loading-cell"><span class="loading-spinner"></span></td></tr></tbody>
           </table>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUPORTE -->
+  <div class="page" id="page-suporte">
+    <div class="topbar">
+      <div><div class="topbar-title">🎫 Suporte</div><div class="topbar-sub">Central de chamados de TI</div></div>
+      <img src="{{ url_for('static', filename='img/unifecaf.png') }}" class="topbar-logo-center" alt="UniFECAF">
+      <div class="topbar-actions">
+        <button class="btn btn-primary" onclick="openModalSuporte()">＋ Novo Chamado</button>
+      </div>
+    </div>
+    <div class="content">
+
+      <!-- Stats -->
+      <div class="stats-grid" id="suporte-stats">
+        <div class="stat-card total"><div class="stat-label">Total</div><div class="stat-value" id="sup-total">—</div></div>
+        <div class="stat-card ativo"><div class="stat-label">Em Andamento</div><div class="stat-value" id="sup-andamento">—</div></div>
+        <div class="stat-card atrasado"><div class="stat-label">Críticos</div><div class="stat-value" id="sup-critica">—</div></div>
+        <div class="stat-card devolvido"><div class="stat-label">Resolvidos</div><div class="stat-value" id="sup-resolvido">—</div></div>
+      </div>
+
+      <!-- Filtros -->
+      <div class="toolbar">
+        <div class="filter-chips">
+          <span class="chip active" onclick="setFiltroSuporte(this,'status','')">Todos</span>
+          <span class="chip" onclick="setFiltroSuporte(this,'status','aberto')">🔵 Aberto</span>
+          <span class="chip" onclick="setFiltroSuporte(this,'status','em_andamento')">🟡 Em Andamento</span>
+          <span class="chip" onclick="setFiltroSuporte(this,'status','pendente')">🟠 Pendente</span>
+          <span class="chip" onclick="setFiltroSuporte(this,'status','resolvido')">🟢 Resolvido</span>
+          <span class="chip" onclick="setFiltroSuporte(this,'status','fechado')">⚫ Fechado</span>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <select class="btn btn-ghost btn-sm" id="filtro-sup-prioridade" onchange="loadSuporte()">
+            <option value="">Todas as prioridades</option>
+            <option value="critica">🔴 Crítica</option>
+            <option value="alta">🟠 Alta</option>
+            <option value="media">🟡 Média</option>
+            <option value="baixa">🟢 Baixa</option>
+          </select>
+          <select class="btn btn-ghost btn-sm" id="filtro-sup-tipo" onchange="loadSuporte()">
+            <option value="">Todos os tipos</option>
+            <option value="incidente">Incidente</option>
+            <option value="requisicao">Requisição</option>
+            <option value="problema">Problema</option>
+            <option value="mudanca">Mudança</option>
+          </select>
+          <div class="search-wrap">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="busca-suporte" placeholder="Buscar chamado..." oninput="loadSuporte()">
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabela -->
+      <div class="table-wrap">
+        <div class="table-header"><h3>Chamados de Suporte</h3></div>
+        <div class="table-scroll">
+          <table>
+            <thead><tr>
+              <th>#</th><th>Título</th><th>Solicitante</th><th>Tipo</th>
+              <th>Prioridade</th><th>Status</th><th>Técnico</th><th>Abertura</th><th>Ações</th>
+            </tr></thead>
+            <tbody id="suporte-tbody">
+              <tr><td colspan="9" class="loading-cell"><span class="loading-spinner"></span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DETALHE DO CHAMADO DE SUPORTE -->
+  <div class="page" id="page-suporte-detalhe">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:12px">
+        <button class="btn btn-ghost btn-sm" onclick="navigate('suporte')">← Voltar</button>
+        <div>
+          <div class="topbar-title" id="detalhe-titulo">Chamado #</div>
+          <div class="topbar-sub" id="detalhe-sub">Detalhes do chamado</div>
+        </div>
+      </div>
+      <img src="{{ url_for('static', filename='img/unifecaf.png') }}" class="topbar-logo-center" alt="UniFECAF">
+      <div class="topbar-actions" id="detalhe-acoes"></div>
+    </div>
+    <div class="content">
+      <div style="display:grid;grid-template-columns:1fr 320px;gap:20px;align-items:start">
+
+        <!-- Coluna principal -->
+        <div>
+          <!-- Descrição -->
+          <div class="table-wrap" style="padding:24px;margin-bottom:20px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+              <h3>📄 Descrição</h3>
+              <div id="detalhe-badges" style="display:flex;gap:8px"></div>
+            </div>
+            <div id="detalhe-descricao" style="font-size:14px;line-height:1.7;color:var(--text-muted);white-space:pre-wrap"></div>
+          </div>
+
+          <!-- Anexos do chamado -->
+          <div class="table-wrap" id="detalhe-anexos-wrap" style="padding:24px;margin-bottom:20px;display:none">
+            <h3 style="margin-bottom:16px">📎 Anexos</h3>
+            <div id="detalhe-anexos" style="display:flex;flex-wrap:wrap;gap:10px"></div>
+          </div>
+
+          <!-- Timeline de comentários -->
+          <div class="table-wrap" style="padding:24px;margin-bottom:20px">
+            <h3 style="margin-bottom:16px">💬 Histórico</h3>
+            <div id="detalhe-comentarios" style="display:flex;flex-direction:column;gap:16px"></div>
+          </div>
+
+          <!-- Formulário de comentário -->
+          <div class="table-wrap" style="padding:24px">
+            <h3 style="margin-bottom:16px">✏️ Adicionar Atualização</h3>
+            <div class="form-group" style="margin-bottom:12px">
+              <textarea id="novo-comentario" placeholder="Descreva a atualização, solução ou observação..." style="min-height:100px"></textarea>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+              <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;color:var(--text-muted)">
+                <input type="checkbox" id="comentario-interno" style="width:auto;padding:0;background:none;border:none">
+                🔒 Nota interna (não visível ao solicitante)
+              </label>
+              <label class="btn btn-ghost btn-sm" style="cursor:pointer">
+                📎 Anexar arquivo
+                <input type="file" id="comentario-arquivo" multiple accept="image/*,.pdf,.doc,.docx,.xls,.xlsx" style="display:none" onchange="previsualizarArquivos(this)">
+              </label>
+            </div>
+            <div id="arquivos-preview" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px"></div>
+            <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px">
+              <button class="btn btn-ghost" onclick="document.getElementById('novo-comentario').value='';limparArquivos()">Limpar</button>
+              <button class="btn btn-primary" onclick="enviarComentario()">Enviar Atualização</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sidebar de detalhes -->
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div class="table-wrap" style="padding:20px">
+            <h4 style="font-size:13px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:16px">Informações</h4>
+            <div id="detalhe-info" style="display:flex;flex-direction:column;gap:12px"></div>
+          </div>
+          <div class="table-wrap" style="padding:20px">
+            <h4 style="font-size:13px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:16px">👤 Técnicos</h4>
+            <div id="detalhe-tecnicos" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px"></div>
+            <button class="btn btn-ghost btn-sm" style="width:100%" onclick="openModalAtribuir()">＋ Atribuir Técnico</button>
+          </div>
+          <div class="table-wrap" style="padding:20px">
+            <h4 style="font-size:13px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px">⚡ Ações Rápidas</h4>
+            <div style="display:flex;flex-direction:column;gap:8px" id="acoes-rapidas"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL NOVO CHAMADO SUPORTE -->
+  <div class="modal-overlay" id="modal-suporte" onclick="if(event.target===this) closeModalSuporte()">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="suporte-modal-title">🎫 Novo Chamado de Suporte</h2>
+        <button class="modal-close" onclick="closeModalSuporte()">✕</button>
+      </div>
+      <form id="form-suporte" onsubmit="salvarSuporte(event)">
+        <input type="hidden" id="suporte-modal-id">
+        <div class="form-grid">
+          <div class="form-group full">
+            <label>Título *</label>
+            <input type="text" id="sup-titulo" placeholder="Descreva o problema brevemente" required>
+          </div>
+          <div class="form-group">
+            <label>Solicitante *</label>
+            <input type="text" id="sup-solicitante-nome" placeholder="Nome completo" required>
+          </div>
+          <div class="form-group">
+            <label>E-mail do Solicitante *</label>
+            <input type="email" id="sup-solicitante-email" placeholder="email@instituicao.br" required>
+          </div>
+          <div class="form-group">
+            <label>Setor / Departamento</label>
+            <input type="text" id="sup-solicitante-setor" placeholder="Ex: RH, Financeiro, Acadêmico">
+          </div>
+          <div class="form-group">
+            <label>Instituição</label>
+            <select id="sup-instituicao">
+              <option value="">Selecione...</option>
+              <option value="UniFECAF">UniFECAF</option>
+              <option value="ColégioSER">ColégioSER</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Tipo *</label>
+            <select id="sup-tipo" required>
+              <option value="requisicao">📋 Requisição</option>
+              <option value="incidente">🔴 Incidente</option>
+              <option value="problema">⚠️ Problema</option>
+              <option value="mudanca">🔄 Mudança</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Prioridade *</label>
+            <select id="sup-prioridade" required>
+              <option value="baixa">🟢 Baixa</option>
+              <option value="media" selected>🟡 Média</option>
+              <option value="alta">🟠 Alta</option>
+              <option value="critica">🔴 Crítica</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Técnico Responsável</label>
+            <select id="sup-tecnico">
+              <option value="">Sem atribuição</option>
+            </select>
+          </div>
+          <div class="form-group full">
+            <label>Descrição detalhada *</label>
+            <textarea id="sup-descricao" placeholder="Descreva o problema com detalhes: o que aconteceu, quando começou, impacto..." style="min-height:120px" required></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-ghost" onclick="closeModalSuporte()">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Abrir Chamado</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL ATRIBUIR TÉCNICO -->
+  <div class="modal-overlay" id="modal-atribuir" onclick="if(event.target===this) closeModalAtribuir()">
+    <div class="modal modal-sm">
+      <div class="modal-header">
+        <h2>👤 Atribuir Técnico</h2>
+        <button class="modal-close" onclick="closeModalAtribuir()">✕</button>
+      </div>
+      <div class="form-grid single" style="padding:4px 0 16px">
+        <div class="form-group">
+          <label>Selecionar Técnico</label>
+          <select id="atribuir-tecnico-select">
+            <option value="">Selecione um técnico...</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost" onclick="closeModalAtribuir()">Cancelar</button>
+        <button type="button" class="btn btn-primary" onclick="confirmarAtribuir()">Atribuir</button>
       </div>
     </div>
   </div>

@@ -39,13 +39,14 @@ function navigate(page) {
 }
 
 function loadPage(page) {
-  if (page === 'dashboard')    loadDashboard();
-  if (page === 'emprestimos')  loadEmprestimos();
-  if (page === 'equipamentos') loadEquipamentos();
-  if (page === 'relatorios')   loadRelatorio();
-  if (page === 'inventario')   loadInventario();
-  if (page === 'manutencoes')  loadManutencoes();
-  if (page === 'usuarios')     loadUsuarios();
+  if (page === 'dashboard')        loadDashboard();
+  if (page === 'emprestimos')      loadEmprestimos();
+  if (page === 'equipamentos')     loadEquipamentos();
+  if (page === 'relatorios')       loadRelatorio();
+  if (page === 'inventario')       loadInventario();
+  if (page === 'manutencoes')      loadManutencoes();
+  if (page === 'usuarios')         loadUsuarios();
+  if (page === 'suporte')          loadSuporte();
 }
 
 // ══════════════════ DASHBOARD ══════════════════
@@ -1252,6 +1253,430 @@ function resetarTimer() {
 ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'].forEach(evento => {
   document.addEventListener(evento, resetarTimer, { passive: true });
 });
+
+// ══════════════════ SUPORTE ══════════════════
+
+let filtroSupStatus = '';
+let chamadoSuporteAtual = null;
+let arquivosParaEnviar = [];
+
+function setFiltroSuporte(el, campo, valor) {
+  if (campo === 'status') filtroSupStatus = valor;
+  document.querySelectorAll('#page-suporte .filter-chips .chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  loadSuporte();
+}
+
+async function loadSuporte() {
+  const params = new URLSearchParams();
+  if (filtroSupStatus) params.append('status', filtroSupStatus);
+  const prioridade = document.getElementById('filtro-sup-prioridade')?.value;
+  const tipo       = document.getElementById('filtro-sup-tipo')?.value;
+  const busca      = document.getElementById('busca-suporte')?.value;
+  if (prioridade) params.append('prioridade', prioridade);
+  if (tipo)       params.append('tipo', tipo);
+  if (busca)      params.append('busca', busca);
+
+  const [chamados, resumo] = await Promise.all([
+    fetch('/api/suporte/chamados?' + params).then(r => r.json()),
+    fetch('/api/suporte/resumo').then(r => r.json())
+  ]);
+
+  // Stats
+  document.getElementById('sup-total').textContent     = resumo.total     ?? '—';
+  document.getElementById('sup-andamento').textContent = resumo.em_andamento ?? '—';
+  document.getElementById('sup-critica').textContent   = resumo.critica   ?? '—';
+  document.getElementById('sup-resolvido').textContent = resumo.resolvido ?? '—';
+
+  const tbody = document.getElementById('suporte-tbody');
+  if (!chamados.length) {
+    tbody.innerHTML = `<tr><td colspan="9"><div class="empty-state"><div class="icon">🎫</div><h3>Nenhum chamado encontrado</h3></div></td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = chamados.map(c => `
+    <tr>
+      <td><span style="font-weight:700;color:var(--fecaf-primary)">#${c.id}</span></td>
+      <td>
+        <div style="font-weight:600;font-size:13px">${c.titulo}</div>
+        <div style="font-size:11px;color:var(--text-muted)">${c.solicitante_nome}</div>
+      </td>
+      <td>
+        <div style="font-size:13px">${c.solicitante_nome}</div>
+        <small style="color:var(--text-muted)">${c.solicitante_email}</small>
+      </td>
+      <td>${badgeTipo(c.tipo)}</td>
+      <td>${badgePrioridade(c.prioridade)}</td>
+      <td>${badgeStatusSuporte(c.status)}</td>
+      <td style="font-size:13px">${c.tecnico !== '—' ? `<span style="color:var(--fecaf-accent)">👤 ${c.tecnico}</span>` : '<span style="color:var(--text-dim)">—</span>'}</td>
+      <td style="font-size:12px;color:var(--text-muted)">${c.criado_em}</td>
+      <td>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-ghost btn-sm" onclick="abrirDetalhe(${c.id})">👁 Ver</button>
+          ${!c.tecnico_id ? `<button class="btn btn-ghost btn-sm" onclick="pegarChamado(${c.id})" style="color:var(--fecaf-accent);border-color:rgba(0,166,81,0.3)">📌 Pegar</button>` : ''}
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function badgeTipo(tipo) {
+  const map = {
+    incidente:  ['🔴', '#EF4444', 'rgba(239,68,68,0.1)',   'Incidente'],
+    requisicao: ['📋', '#3B82F6', 'rgba(59,130,246,0.1)',  'Requisição'],
+    problema:   ['⚠️', '#F59E0B', 'rgba(245,158,11,0.1)', 'Problema'],
+    mudanca:    ['🔄', '#8B5CF6', 'rgba(139,92,246,0.1)',  'Mudança'],
+  };
+  const [icon, color, bg, label] = map[tipo] || ['📋', '#8899AA', 'rgba(136,153,170,0.1)', tipo];
+  return `<span style="background:${bg};color:${color};border:1px solid ${color}40;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600">${icon} ${label}</span>`;
+}
+
+function badgePrioridade(p) {
+  const map = {
+    critica: ['🔴', '#EF4444', 'rgba(239,68,68,0.1)',   'Crítica'],
+    alta:    ['🟠', '#F97316', 'rgba(249,115,22,0.1)',  'Alta'],
+    media:   ['🟡', '#F59E0B', 'rgba(245,158,11,0.1)', 'Média'],
+    baixa:   ['🟢', '#22C55E', 'rgba(34,197,94,0.1)',  'Baixa'],
+  };
+  const [icon, color, bg, label] = map[p] || ['⚪', '#8899AA', 'rgba(136,153,170,0.1)', p];
+  return `<span style="background:${bg};color:${color};border:1px solid ${color}40;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600">${icon} ${label}</span>`;
+}
+
+function badgeStatusSuporte(s) {
+  const map = {
+    aberto:       ['🔵', '#3B82F6', 'rgba(59,130,246,0.1)',  'Aberto'],
+    em_andamento: ['🟡', '#F59E0B', 'rgba(245,158,11,0.1)', 'Em Andamento'],
+    pendente:     ['🟠', '#F97316', 'rgba(249,115,22,0.1)', 'Pendente'],
+    resolvido:    ['🟢', '#22C55E', 'rgba(34,197,94,0.1)',  'Resolvido'],
+    fechado:      ['⚫', '#6B7280', 'rgba(107,114,128,0.1)','Fechado'],
+  };
+  const [icon, color, bg, label] = map[s] || ['⚪', '#8899AA', 'rgba(136,153,170,0.1)', s];
+  return `<span style="background:${bg};color:${color};border:1px solid ${color}40;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600">${icon} ${label}</span>`;
+}
+
+// ── DETALHE ────────────────────────────────────────────────────
+
+async function abrirDetalhe(id) {
+  navigate('suporte-detalhe');
+  const c = await fetch(`/api/suporte/chamados/${id}`).then(r => r.json());
+  chamadoSuporteAtual = c;
+  renderDetalhe(c);
+}
+
+function renderDetalhe(c) {
+  document.getElementById('detalhe-titulo').textContent = `#${c.id} — ${c.titulo}`;
+  document.getElementById('detalhe-sub').textContent    = `${c.solicitante_nome} • Aberto ${c.criado_em}`;
+  document.getElementById('detalhe-descricao').textContent = c.descricao;
+
+  // Badges
+  document.getElementById('detalhe-badges').innerHTML =
+    badgeTipo(c.tipo) + ' ' + badgePrioridade(c.prioridade) + ' ' + badgeStatusSuporte(c.status);
+
+  // Info lateral
+  document.getElementById('detalhe-info').innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:8px">
+      ${infoRow('Status',       badgeStatusSuporte(c.status))}
+      ${infoRow('Prioridade',   badgePrioridade(c.prioridade))}
+      ${infoRow('Tipo',         badgeTipo(c.tipo))}
+      ${infoRow('Instituição',  c.instituicao)}
+      ${infoRow('Solicitante',  c.solicitante_nome)}
+      ${infoRow('E-mail',       `<a href="mailto:${c.solicitante_email}" style="color:var(--fecaf-primary)">${c.solicitante_email}</a>`)}
+      ${infoRow('Setor',        c.solicitante_setor)}
+      ${infoRow('Abertura',     c.criado_em)}
+      ${infoRow('Atualizado',   c.atualizado_em)}
+      ${c.resolvido_em ? infoRow('Resolvido', c.resolvido_em) : ''}
+      ${infoRow('Tempo aberto', c.tempo_aberto)}
+    </div>
+  `;
+
+  // Técnicos
+  const tecDiv = document.getElementById('detalhe-tecnicos');
+  if (c.tecnicos.length) {
+    tecDiv.innerHTML = c.tecnicos.map(t => `
+      <div style="display:flex;align-items:center;gap:8px;padding:8px;background:var(--bg-card2);border-radius:8px">
+        <div style="width:32px;height:32px;background:linear-gradient(135deg,var(--fecaf-primary),var(--fecaf-accent));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0">${t.nome[0]}</div>
+        <span style="font-size:13px;font-weight:500">${t.nome}</span>
+        ${c.tecnico_id === t.id ? '<span style="font-size:10px;color:var(--fecaf-accent);margin-left:auto">Principal</span>' : ''}
+      </div>
+    `).join('');
+  } else {
+    tecDiv.innerHTML = '<div style="font-size:13px;color:var(--text-dim)">Nenhum técnico atribuído</div>';
+  }
+
+  // Ações rápidas
+  const acoes = document.getElementById('acoes-rapidas');
+  const statusOpcoes = ['aberto','em_andamento','pendente','resolvido','fechado']
+    .filter(s => s !== c.status);
+  acoes.innerHTML = statusOpcoes.map(s => `
+    <button class="btn btn-ghost btn-sm" style="width:100%;justify-content:flex-start" onclick="mudarStatus('${s}')">
+      ${badgeStatusSuporte(s)} Marcar como
+    </button>
+  `).join('') + `
+    <button class="btn btn-ghost btn-sm" style="width:100%;justify-content:flex-start;margin-top:8px" onclick="openModalSuporteEditar()">
+      ✏️ Editar chamado
+    </button>
+  `;
+
+  // Comentários
+  renderComentarios(c.comentarios);
+
+  // Anexos
+  if (c.anexos.length) {
+    document.getElementById('detalhe-anexos-wrap').style.display = 'block';
+    document.getElementById('detalhe-anexos').innerHTML = c.anexos.map(a =>
+      anexoCard(a)
+    ).join('');
+  }
+}
+
+function infoRow(label, valor) {
+  if (!valor || valor === '—') return '';
+  return `
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <span style="font-size:10px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.06em">${label}</span>
+      <span style="font-size:13px">${valor}</span>
+    </div>
+  `;
+}
+
+function renderComentarios(comentarios) {
+  const div = document.getElementById('detalhe-comentarios');
+  if (!comentarios.length) {
+    div.innerHTML = '<div style="color:var(--text-dim);font-size:13px">Nenhuma atualização ainda.</div>';
+    return;
+  }
+  div.innerHTML = comentarios.map(c => `
+    <div style="display:flex;gap:12px;${c.interno ? 'opacity:0.75' : ''}">
+      <div style="width:36px;height:36px;background:${c.interno ? 'var(--bg-card2)' : 'linear-gradient(135deg,var(--fecaf-primary),var(--fecaf-accent))'};border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#fff;flex-shrink:0">${c.autor[0]}</div>
+      <div style="flex:1">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+          <span style="font-weight:600;font-size:13px">${c.autor}</span>
+          ${c.interno ? '<span style="font-size:10px;background:rgba(107,114,128,0.2);color:#9CA3AF;padding:2px 6px;border-radius:4px">🔒 Interno</span>' : ''}
+          <span style="font-size:11px;color:var(--text-dim);margin-left:auto">${c.criado_em}</span>
+        </div>
+        <div style="background:var(--bg-card2);border-radius:10px;padding:12px 16px;font-size:13px;line-height:1.6;white-space:pre-wrap">${formatarTexto(c.texto)}</div>
+        ${c.anexos.length ? `<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px">${c.anexos.map(a => anexoCard(a)).join('')}</div>` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+function formatarTexto(texto) {
+  return texto
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\n/g, '<br>');
+}
+
+function anexoCard(a) {
+  const isImagem = a.tipo_mime && a.tipo_mime.startsWith('image/');
+  return `
+    <a href="${a.url}" target="_blank" style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--bg-card2);border:1px solid var(--border);border-radius:8px;text-decoration:none;color:var(--text);font-size:12px">
+      ${isImagem ? '🖼️' : '📎'} ${a.nome_arquivo}
+      <span style="color:var(--text-dim)">(${formatarTamanho(a.tamanho)})</span>
+    </a>
+  `;
+}
+
+function formatarTamanho(bytes) {
+  if (!bytes) return '—';
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+  return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+}
+
+async function mudarStatus(novoStatus) {
+  if (!chamadoSuporteAtual) return;
+  const res = await fetch(`/api/suporte/chamados/${chamadoSuporteAtual.id}`, {
+    method: 'PUT',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({status: novoStatus})
+  }).then(r => r.json());
+  if (res.success) {
+    showToast('Status atualizado!', 'success');
+    abrirDetalhe(chamadoSuporteAtual.id);
+  } else {
+    showToast('Erro ao atualizar status', 'error');
+  }
+}
+
+async function pegarChamado(id) {
+  const res = await fetch(`/api/suporte/chamados/${id}/pegar`, {method:'POST'}).then(r => r.json());
+  if (res.success) { showToast('Chamado assumido!', 'success'); loadSuporte(); }
+  else showToast('Erro ao assumir chamado', 'error');
+}
+
+// ── COMENTÁRIO ────────────────────────────────────────────────
+
+function previsualizarArquivos(input) {
+  const preview = document.getElementById('arquivos-preview');
+  arquivosParaEnviar = Array.from(input.files);
+  preview.innerHTML = arquivosParaEnviar.map((f, i) => `
+    <div style="display:flex;align-items:center;gap:6px;padding:6px 10px;background:var(--bg-card2);border-radius:6px;font-size:12px">
+      📎 ${f.name} <span style="color:var(--text-dim)">(${formatarTamanho(f.size)})</span>
+      <button type="button" onclick="removerArquivo(${i})" style="background:none;border:none;color:var(--atrasado);cursor:pointer;width:auto;padding:0;margin-left:4px">✕</button>
+    </div>
+  `).join('');
+}
+
+function removerArquivo(i) {
+  arquivosParaEnviar.splice(i, 1);
+  const preview = document.getElementById('arquivos-preview');
+  preview.innerHTML = arquivosParaEnviar.map((f, idx) => `
+    <div style="display:flex;align-items:center;gap:6px;padding:6px 10px;background:var(--bg-card2);border-radius:6px;font-size:12px">
+      📎 ${f.name} <span style="color:var(--text-dim)">(${formatarTamanho(f.size)})</span>
+      <button type="button" onclick="removerArquivo(${idx})" style="background:none;border:none;color:var(--atrasado);cursor:pointer;width:auto;padding:0;margin-left:4px">✕</button>
+    </div>
+  `).join('');
+}
+
+function limparArquivos() {
+  arquivosParaEnviar = [];
+  document.getElementById('arquivos-preview').innerHTML = '';
+  document.getElementById('comentario-arquivo').value = '';
+}
+
+async function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload  = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+async function enviarComentario() {
+  if (!chamadoSuporteAtual) return;
+  const texto   = document.getElementById('novo-comentario').value.trim();
+  const interno = document.getElementById('comentario-interno').checked;
+  if (!texto) { showToast('Digite uma mensagem', 'error'); return; }
+
+  const anexos = await Promise.all(arquivosParaEnviar.map(async f => ({
+    nome:  f.name,
+    tipo:  f.type,
+    dados: await fileToBase64(f)
+  })));
+
+  const res = await fetch(`/api/suporte/chamados/${chamadoSuporteAtual.id}/comentarios`, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({texto, interno, anexos})
+  }).then(r => r.json());
+
+  if (res.success) {
+    showToast('Atualização enviada!', 'success');
+    document.getElementById('novo-comentario').value = '';
+    limparArquivos();
+    document.getElementById('comentario-interno').checked = false;
+    abrirDetalhe(chamadoSuporteAtual.id);
+  } else {
+    showToast('Erro ao enviar atualização', 'error');
+  }
+}
+
+// ── MODAIS ────────────────────────────────────────────────────
+
+async function openModalSuporte() {
+  document.getElementById('suporte-modal-title').textContent = '🎫 Novo Chamado de Suporte';
+  document.getElementById('suporte-modal-id').value = '';
+  document.getElementById('form-suporte').reset();
+  await carregarTecnicosSelect('sup-tecnico');
+  document.getElementById('modal-suporte').classList.add('open');
+}
+
+async function openModalSuporteEditar() {
+  if (!chamadoSuporteAtual) return;
+  const c = chamadoSuporteAtual;
+  document.getElementById('suporte-modal-title').textContent = `✏️ Editar Chamado #${c.id}`;
+  document.getElementById('suporte-modal-id').value        = c.id;
+  document.getElementById('sup-titulo').value              = c.titulo;
+  document.getElementById('sup-solicitante-nome').value    = c.solicitante_nome;
+  document.getElementById('sup-solicitante-email').value   = c.solicitante_email;
+  document.getElementById('sup-solicitante-setor').value   = c.solicitante_setor !== '—' ? c.solicitante_setor : '';
+  document.getElementById('sup-tipo').value                = c.tipo;
+  document.getElementById('sup-prioridade').value          = c.prioridade;
+  document.getElementById('sup-descricao').value           = c.descricao;
+  if (c.instituicao !== '—') document.getElementById('sup-instituicao').value = c.instituicao;
+  await carregarTecnicosSelect('sup-tecnico');
+  if (c.tecnico_id) document.getElementById('sup-tecnico').value = c.tecnico_id;
+  document.getElementById('modal-suporte').classList.add('open');
+}
+
+function closeModalSuporte() {
+  document.getElementById('modal-suporte').classList.remove('open');
+}
+
+async function salvarSuporte(event) {
+  event.preventDefault();
+  const id = document.getElementById('suporte-modal-id').value;
+  const payload = {
+    titulo:            document.getElementById('sup-titulo').value,
+    descricao:         document.getElementById('sup-descricao').value,
+    solicitante_nome:  document.getElementById('sup-solicitante-nome').value,
+    solicitante_email: document.getElementById('sup-solicitante-email').value,
+    solicitante_setor: document.getElementById('sup-solicitante-setor').value,
+    tipo:              document.getElementById('sup-tipo').value,
+    prioridade:        document.getElementById('sup-prioridade').value,
+    instituicao:       document.getElementById('sup-instituicao').value,
+    tecnico_id:        document.getElementById('sup-tecnico').value || null,
+  };
+
+  const url    = id ? `/api/suporte/chamados/${id}` : '/api/suporte/chamados';
+  const method = id ? 'PUT' : 'POST';
+  const res    = await fetch(url, {
+    method, headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload)
+  }).then(r => r.json());
+
+  if (res.success) {
+    showToast(id ? 'Chamado atualizado!' : 'Chamado aberto!', 'success');
+    closeModalSuporte();
+    if (id) abrirDetalhe(parseInt(id));
+    else loadSuporte();
+  } else {
+    showToast('Erro ao salvar chamado', 'error');
+  }
+}
+
+async function openModalAtribuir() {
+  await carregarTecnicosSelect('atribuir-tecnico-select');
+  document.getElementById('modal-atribuir').classList.add('open');
+}
+
+function closeModalAtribuir() {
+  document.getElementById('modal-atribuir').classList.remove('open');
+}
+
+async function confirmarAtribuir() {
+  if (!chamadoSuporteAtual) return;
+  const tecnico_id = document.getElementById('atribuir-tecnico-select').value;
+  if (!tecnico_id) { showToast('Selecione um técnico', 'error'); return; }
+  const res = await fetch(`/api/suporte/chamados/${chamadoSuporteAtual.id}/atribuir`, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({adicionar_tecnico_id: tecnico_id})
+  }).then(r => r.json());
+  if (res.success) {
+    showToast('Técnico atribuído!', 'success');
+    closeModalAtribuir();
+    abrirDetalhe(chamadoSuporteAtual.id);
+  } else {
+    showToast('Erro ao atribuir técnico', 'error');
+  }
+}
+
+async function carregarTecnicosSelect(selectId) {
+  const usuarios = await fetch('/api/usuarios').then(r => r.json());
+  const select   = document.getElementById(selectId);
+  const val      = select.value;
+  const placeholder = select.options[0].text;
+  select.innerHTML  = `<option value="">${placeholder}</option>`;
+  usuarios.forEach(u => {
+    const opt = document.createElement('option');
+    opt.value       = u.id;
+    opt.textContent = u.nome + (u.nivel === 'admin' ? ' 👑' : '');
+    select.appendChild(opt);
+  });
+  if (val) select.value = val;
+}
 
 // ══════════════════ INICIALIZAÇÃO ══════════════════
 

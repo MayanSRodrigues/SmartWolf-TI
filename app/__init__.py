@@ -30,6 +30,7 @@ def create_app():
     from app.routes.chamados import bp as cham_bp
     from app.routes.auth import bp as auth_bp
     from app.routes.usuarios import bp as usr_bp
+    from app.routes.suporte import bp as suporte_bp
 
     app.register_blueprint(emp_bp)
     app.register_blueprint(equip_bp)
@@ -39,8 +40,8 @@ def create_app():
     app.register_blueprint(cham_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(usr_bp)
+    app.register_blueprint(suporte_bp)
 
-    # Cria tabelas ANTES do scheduler
     with app.app_context():
         db.create_all()
         print("✅ Tabelas verificadas/criadas!")

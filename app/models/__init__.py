@@ -275,3 +275,5 @@ class Manutencao(db.Model):
             'observacoes':   self.observacoes,
             'criado_em':     self.criado_em.strftime('%d/%m/%Y %H:%M')
         }
+    
+from app.models.suporte import ChamadoSuporte, ComentarioSuporte, AnexoSuporte    
