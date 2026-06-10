@@ -335,3 +335,18 @@ def api_suporte_deletar(id):
     db.session.delete(c)
     db.session.commit()
     return jsonify({'success': True})
+
+@bp.route('/api/suporte/chamados/limpar', methods=['DELETE'])
+@login_required
+def api_suporte_limpar():
+    if not current_user.is_admin():
+        return jsonify({'error': 'Sem permissão'}), 403
+    # Mantém apenas o chamado com menor ID
+    primeiro = ChamadoSuporte.query.order_by(ChamadoSuporte.id.asc()).first()
+    if not primeiro:
+        return jsonify({'message': 'Nenhum chamado encontrado'})
+    duplicados = ChamadoSuporte.query.filter(ChamadoSuporte.id != primeiro.id).all()
+    for c in duplicados:
+        db.session.delete(c)
+    db.session.commit()
+    return jsonify({'success': True, 'message': f'{len(duplicados)} chamados removidos, mantido #{ primeiro.id}'})
