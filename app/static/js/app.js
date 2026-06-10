@@ -1415,6 +1415,9 @@ function renderDetalhe(c) {
     <button class="btn btn-ghost btn-sm" style="width:100%;justify-content:flex-start;margin-top:8px" onclick="openModalSuporteEditar()">
       ✏️ Editar chamado
     </button>
+    <button class="btn btn-danger btn-sm" style="width:100%;justify-content:flex-start;margin-top:4px" onclick="deletarChamadoSuporte(${c.id})">
+      🗑 Excluir chamado
+    </button>
   `;
 
   // Comentários
@@ -1496,6 +1499,17 @@ async function mudarStatus(novoStatus) {
     abrirDetalhe(chamadoSuporteAtual.id);
   } else {
     toast('Erro ao atualizar status', 'error');
+  }
+}
+
+async function deletarChamadoSuporte(id) {
+  if (!confirm('Excluir este chamado permanentemente?')) return;
+  const res = await fetch(`/api/suporte/chamados/${id}/deletar`, {method:'POST'}).then(r => r.json());
+  if (res.success) {
+    toast('Chamado excluído!', 'success');
+    navigate('suporte');
+  } else {
+    toast('Erro ao excluir chamado', 'error');
   }
 }
 
