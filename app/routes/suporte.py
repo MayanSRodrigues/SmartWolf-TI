@@ -326,22 +326,11 @@ def api_suporte_pegar(id):
 
 # ── DELETAR ──────────────────────────────────────────────────────
 
-@bp.route('/api/suporte/chamados/<int:id>', methods=['DELETE'])
-@login_required
-def api_suporte_deletar(id):
-    if not current_user.is_admin():
-        return jsonify({'error': 'Sem permissão'}), 403
-    c = ChamadoSuporte.query.get_or_404(id)
-    db.session.delete(c)
-    db.session.commit()
-    return jsonify({'success': True})
-
-@bp.route('/api/suporte/chamados/limpar', methods=['DELETE'])
+@bp.route('/api/suporte/chamados/limpar', methods=['POST'])
 @login_required
 def api_suporte_limpar():
     if not current_user.is_admin():
         return jsonify({'error': 'Sem permissão'}), 403
-    # Mantém apenas o chamado com menor ID
     primeiro = ChamadoSuporte.query.order_by(ChamadoSuporte.id.asc()).first()
     if not primeiro:
         return jsonify({'message': 'Nenhum chamado encontrado'})
@@ -349,4 +338,4 @@ def api_suporte_limpar():
     for c in duplicados:
         db.session.delete(c)
     db.session.commit()
-    return jsonify({'success': True, 'message': f'{len(duplicados)} chamados removidos, mantido #{ primeiro.id}'})
+    return jsonify({'success': True, 'message': f'{len(duplicados)} chamados removidos, mantido #{primeiro.id}'})
