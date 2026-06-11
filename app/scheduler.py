@@ -26,7 +26,6 @@ def iniciar_scheduler(app):
                 tempo_restante = e.data_hora_devolucao_prevista - agora
                 minutos_restantes = tempo_restante.total_seconds() / 60
 
-                # Lembrete 30 minutos antes
                 if 28 <= minutos_restantes <= 32 and not e.lembrete_enviado:
                     html = template_lembrete(
                         responsavel        = e.responsavel,
@@ -44,7 +43,6 @@ def iniciar_scheduler(app):
                         e.lembrete_enviado = True
                         db.session.commit()
 
-                # Notificação de atraso (1h após devolução prevista)
                 limite_atraso = e.data_hora_devolucao_prevista + timedelta(hours=1)
                 if agora > limite_atraso and not e.aviso_atraso_enviado:
                     html = template_atraso(
@@ -64,14 +62,30 @@ def iniciar_scheduler(app):
                         e.status = 'em_atraso'
                         db.session.commit()
 
+    def verificar_emails():
+        """Roda a cada 5 minutos — lê e-mails novos e cria chamados."""
+        try:
+            from app.email_reader import ler_emails_novos
+            ler_emails_novos(app)
+        except Exception as e:
+            print(f'❌ Erro no leitor de e-mails: {e}')
+
     scheduler.add_job(
-        func     = verificar_lembretes,
-        trigger  = 'interval',
-        minutes  = 5,
-        id       = 'verificar_lembretes',
+        func             = verificar_lembretes,
+        trigger          = 'interval',
+        minutes          = 5,
+        id               = 'verificar_lembretes',
+        replace_existing = True
+    )
+
+    scheduler.add_job(
+        func             = verificar_emails,
+        trigger          = 'interval',
+        minutes          = 5,
+        id               = 'verificar_emails',
         replace_existing = True
     )
 
     if not scheduler.running:
         scheduler.start()
-        print("✅ Agendador de e-mails iniciado!")
+        print("✅ Agendador iniciado — lembretes e e-mails ativos!")

@@ -33,3 +33,9 @@ class Config:
 
     # Timeout de inatividade em minutos (ajuste aqui quando necessário)
     SESSION_TIMEOUT_MINUTOS = 60
+
+    # Configurações IMAP
+    IMAP_SERVER = os.environ.get('IMAP_SERVER', 'imap.gmail.com')
+    IMAP_PORT   = int(os.environ.get('IMAP_PORT', 993))
+    IMAP_EMAIL  = os.environ.get('IMAP_EMAIL', '')
+    IMAP_SENHA  = os.environ.get('IMAP_SENHA', '')
